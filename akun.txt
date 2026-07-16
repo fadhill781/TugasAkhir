@@ -1,0 +1,23 @@
+=====================================
+        DAFTAR AKUN APLIKASI
+=====================================
+
+[SUPERADMIN]
+Email    : superadmin@test.com
+Password : password123
+Akses    : /superadmin/users
+
+[ADMIN]
+Email    : admin@test.com
+Password : password123
+Akses    : /pesanan, /dashboard admin
+
+[USER]
+Email    : user@test.com
+Password : password123
+Akses    : /homepage, /paket-wisata-public
+
+=====================================
+Database : ta_2
+URL      : http://127.0.0.1:8000
+=====================================

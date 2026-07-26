@@ -12,14 +12,14 @@ class MidtransController extends Controller
 {
     public function index()
     {
-        $kategoris = \App\Models\Kategori::withCount('paketHaris')
+        $kategoris = \App\Models\Kategori::withCount('paketWisatas')
             ->get()
             ->map(function($kategori) {
                 return [
                     'id'            => $kategori->id,
                     'nama_kategori' => $kategori->nama_kategori,
                     'deskripsi'     => $kategori->deskripsi,
-                    'jumlah_paket'  => $kategori->paket_haris_count,
+                    'jumlah_paket'  => $kategori->paket_wisatas_count,
                     'image_url'     => $kategori->image
                         ? asset('storage/uploads/admin/kategori/' . $kategori->image)
                         : null,
@@ -278,19 +278,18 @@ class MidtransController extends Controller
             abort(403);
         }
 
-        // Ambil paket wisata pertama dari paket_hari ini untuk keperluan tampilan
-        $paketWisata = PaketWisata::where('paket_hari_id', $pesanan->paket_hari_id)->first();
-
-        if (!$paketWisata) {
-            return redirect()->route('pesanan.history')->with('error', 'Paket wisata tidak ditemukan.');
-        }
-
         $kategoriNama = $pesanan->paketHari?->kategori?->nama_kategori ?? 'Paket Wisata';
         $durasiHari   = $pesanan->paketHari?->durasi_hari ?? '';
 
-        $packageWithBooking = array_merge($paketWisata->toArray(), [
+        // Cari paket wisata jika ada, tapi tidak wajib
+        $paketWisata = PaketWisata::where('paket_hari_id', $pesanan->paket_hari_id)->first();
+
+        $packageData = [
+            'id'               => $paketWisata?->id ?? $pesanan->paket_hari_id,
             'nama_wisata'      => $kategoriNama . ($durasiHari ? " ({$durasiHari} Hari)" : ''),
             'harga'            => $pesanan->total,
+            'image'            => $paketWisata?->image ?? null,
+            'short_description'=> $paketWisata?->short_description ?? null,
             'booking_info'     => [
                 'nama'              => $pesanan->nama,
                 'email'             => $pesanan->email,
@@ -300,10 +299,10 @@ class MidtransController extends Controller
                 'catatan'           => $pesanan->catatan,
                 'total_harga'       => $pesanan->total,
             ],
-        ]);
+        ];
 
         return Inertia::render('Checkout', [
-            'package'  => $packageWithBooking,
+            'package'  => $packageData,
             'order_id' => $pesanan->order_id,
         ]);
     }

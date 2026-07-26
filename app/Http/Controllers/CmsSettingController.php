@@ -13,14 +13,14 @@ class CmsSettingController extends Controller
     {
         $setting = CmsSetting::first();
 
-        $kategoris = \App\Models\Kategori::withCount('paketHaris')
+        $kategoris = \App\Models\Kategori::withCount('paketWisatas')
             ->get()
             ->map(function($kategori) {
                 return [
                     'id'            => $kategori->id,
                     'nama_kategori' => $kategori->nama_kategori,
                     'deskripsi'     => $kategori->deskripsi,
-                    'jumlah_paket'  => $kategori->paket_haris_count,
+                    'jumlah_paket'  => $kategori->paket_wisatas_count,
                     'image_url'     => $kategori->image
                         ? asset('storage/uploads/admin/kategori/' . $kategori->image)
                         : null,
@@ -207,14 +207,14 @@ class CmsSettingController extends Controller
     {
         $setting = CmsSetting::first();
     
-        $kategoris = \App\Models\Kategori::withCount('paketHaris')
+        $kategoris = \App\Models\Kategori::withCount('paketWisatas')
             ->get()
             ->map(function($kategori) {
                 return [
                     'id'            => $kategori->id,
                     'nama_kategori' => $kategori->nama_kategori,
                     'deskripsi'     => $kategori->deskripsi,
-                    'jumlah_paket'  => $kategori->paket_haris_count,
+                    'jumlah_paket'  => $kategori->paket_wisatas_count,
                     'image_url'     => $kategori->image
                         ? asset('storage/uploads/admin/kategori/' . $kategori->image)
                         : null,

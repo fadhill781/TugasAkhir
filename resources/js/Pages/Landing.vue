@@ -150,29 +150,32 @@ onMounted(() => {
       <div class="container mx-auto px-6">
         <div class="flex items-center gap-2 mb-2">
           <div class="w-1 h-5 bg-blue-600 rounded"></div>
-          <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Sewa Mobil</span>
+          <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Pilihan Terbaik</span>
         </div>
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Sewa Mobil</h2>
-        <p class="text-gray-500 mb-8 text-sm">Nikmati perjalanan Anda dengan kenyamanan maksimal, tersedia dengan harga terjangkau</p>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 uppercase">Sewa Mobil</h2>
+        <p class="text-gray-500 mb-8 text-sm">Sewa Mobil Untuk Kebutuhan, Tersedia Dengan Harga Terjangkau.</p>
 
-        <div v-if="mobils && mobils.length > 0" class="grid grid-cols-2 md:grid-cols-3 gap-5">
-          <div v-for="mobil in mobils" :key="mobil.id"
-               class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
-            <div class="bg-gray-50 h-40 flex items-center justify-center overflow-hidden p-4">
+        <div v-if="mobils && mobils.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <a v-for="mobil in mobils" :key="mobil.id"
+             href="/login-user"
+             class="group block bg-white rounded-2xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all duration-300 p-5 text-center cursor-pointer">
+            <!-- Image Box -->
+            <div class="bg-white border border-gray-200 rounded-xl overflow-hidden h-44 flex items-center justify-center mb-4 group-hover:border-blue-400 transition-colors">
               <img v-if="mobil.image_url" :src="mobil.image_url" :alt="mobil.nama"
-                   class="h-full w-full object-contain hover:scale-105 transition-transform duration-300" />
-              <span v-else class="text-5xl">🚗</span>
+                   class="h-full w-full object-contain p-3" />
+              <span v-else class="text-6xl">🚗</span>
             </div>
-            <div class="p-4">
-              <h3 class="font-bold text-gray-800 text-sm mb-1 truncate">{{ mobil.nama }}</h3>
-              <p class="text-blue-600 font-bold text-sm">{{ mobil.harga }}</p>
-              <p class="text-gray-400 text-xs">{{ mobil.durasi ? mobil.durasi + ' hari' : '' }}</p>
-              <a href="/login-user"
-                 class="mt-3 w-full px-3 py-1.5 text-xs cursor-pointer rounded-md border-2 border-black bg-white font-bold text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none inline-flex items-center justify-center">
-                Detail
-              </a>
-            </div>
-          </div>
+            <!-- Info -->
+            <h3 class="font-bold text-gray-900 text-base mb-1">{{ mobil.nama }}</h3>
+            <p class="text-gray-500 text-sm mb-3">
+              IDR {{ Number(mobil.harga).toLocaleString('id-ID') }}
+              <span v-if="mobil.durasi"> / {{ mobil.durasi }} Hari</span>
+            </p>
+            <!-- Button -->
+            <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg transition-all text-sm w-full">
+              Pesan
+            </button>
+          </a>
         </div>
         <div v-else class="text-center text-gray-400 py-12">Belum ada mobil tersedia</div>
       </div>

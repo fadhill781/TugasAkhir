@@ -96,7 +96,6 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', UserMiddleware::class])->group(function () {
     Route::get('/homepage', [CmsSettingController::class, 'homepage'])->name('homepage');
-    Route::get('/riwayat-pesanan', [PesananController::class, 'historyUser'])->name('pesanan.history');
     Route::get('/user/invoice/{id}', [PesananController::class, 'generateInvoice'])->name('pesanan.invoice.user');
     Route::post('/pesanan/{id}/bukti', [PesananController::class, 'uploadBukti'])->name('pesanan.bukti');
     Route::get('/galeri', [\App\Http\Controllers\GaleriController::class, 'index'])->name('galeri.index');

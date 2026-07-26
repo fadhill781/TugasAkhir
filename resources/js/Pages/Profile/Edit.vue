@@ -199,7 +199,7 @@ function uploadBukti(id) {
                                         </div>
                                         
                                         <!-- Lanjutkan Pesanan button - untuk pending -->
-                                        <a v-if="p.status === 'pending'" :href="route('checkout.resume', p.id)"
+                                         <a v-if="p.status === 'pending'" :href="`/checkout/resume/${p.id}`"
                                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 cursor-pointer rounded-md border-2 border-black bg-blue-600 font-bold text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none text-sm">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>

@@ -22,6 +22,7 @@
     <nav class="px-4 space-y-2 font-semibold text-dark overflow-y-auto flex-1 mt-2 pb-2 scrollbar-hide"
          style="max-height: calc(100vh - 120px);"
     >
+      <!-- Dashboard: semua admin (admin & superadmin) -->
       <SidebarLink 
         href="/admin/dashboard" 
         label="Dashboard" 
@@ -30,8 +31,8 @@
         :collapsed="!sidebarOpen"
       />
       
-      <!-- CMS Menu with Submenu -->
-      <div>
+      <!-- CMS Menu: hanya superadmin -->
+      <div v-if="$page.props.auth?.user?.role === 'superadmin'">
         <button
           @click="toggleCmsMenu"
           class="w-full flex items-center justify-between gap-3 rounded-md text-dark overflow-hidden px-4 py-2"
@@ -130,6 +131,7 @@
         :collapsed="!sidebarOpen"
       />
       <SidebarLink 
+        v-if="$page.props.auth?.user?.role === 'superadmin'"
         href="/pesanan" 
         label="Pesanan" 
         icon="las la-clipboard-list"
@@ -179,9 +181,9 @@
         </transition>
       </div>
 
-      <div>
+      <!-- Transaksi: hanya superadmin -->
+      <div v-if="$page.props.auth?.user?.role === 'superadmin'">
         <button
-          @click="toggleTransaksiMenu"
           class="w-full flex items-center justify-between gap-3 rounded-md text-dark overflow-hidden px-4 py-2"
           :class="$page.url.startsWith('/transaksi') ? 'bg-white' : ''"
         >

@@ -15,30 +15,37 @@ const showKategoriForm = ref(false);
 const editingKategori = ref(null);
 
 const kategoriForm = useForm({
+    _method: '',
     nama_kategori: '',
     deskripsi: '',
+    image: null,
 });
 
 function openAddKategori() {
     editingKategori.value = null;
     kategoriForm.reset();
+    kategoriForm._method = '';
     showKategoriForm.value = true;
 }
 
 function openEditKategori(k) {
     editingKategori.value = k;
+    kategoriForm._method = 'PUT';
     kategoriForm.nama_kategori = k.nama_kategori;
     kategoriForm.deskripsi = k.deskripsi || '';
+    kategoriForm.image = null;
     showKategoriForm.value = true;
 }
 
 function submitKategori() {
     if (editingKategori.value) {
-        kategoriForm.put(route('kategori.update', editingKategori.value.id), {
+        kategoriForm.post(route('kategori.update', editingKategori.value.id), {
+            forceFormData: true,
             onSuccess: () => { showKategoriForm.value = false; kategoriForm.reset(); }
         });
     } else {
         kategoriForm.post(route('kategori.store'), {
+            forceFormData: true,
             onSuccess: () => { showKategoriForm.value = false; kategoriForm.reset(); }
         });
     }
@@ -56,8 +63,9 @@ const currentPage = ref(1);
 const perPage = ref(10);
 
 const filteredPaket = computed(() => {
-    if (!searchQuery.value) return props.paketwisata;
-    return props.paketwisata.filter(p =>
+    const sorted = [...props.paketwisata].sort((a, b) => b.id - a.id);
+    if (!searchQuery.value) return sorted;
+    return sorted.filter(p =>
         p.nama_wisata.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
 });
@@ -114,13 +122,14 @@ function destroyPaket(id) {
                                 <th class="border-b border-black border-l-0 px-4 py-3 bg-blue-500 text-black rounded-tl-2xl">No</th>
                                 <th class="border-b border-black px-4 py-3 bg-blue-500 text-black">Nama Kategori</th>
                                 <th class="border-b border-black px-4 py-3 bg-blue-500 text-black">Deskripsi</th>
+                                <th class="border-b border-black px-4 py-3 bg-blue-500 text-black">Gambar</th>
                                 <th class="border-b border-black px-4 py-3 bg-blue-500 text-black">Jumlah Paket</th>
                                 <th class="border-b border-black border-r-0 px-4 py-2 bg-blue-500 text-black rounded-tr-2xl">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-if="!kategoris || kategoris.length === 0">
-                                <td colspan="5" class="text-center py-6 text-gray-400 border-b border-black">
+                                <td colspan="6" class="text-center py-6 text-gray-400 border-b border-black">
                                     Belum ada kategori. Tambah kategori dulu sebelum membuat paket wisata.
                                 </td>
                             </tr>
@@ -129,12 +138,17 @@ function destroyPaket(id) {
                                 <td class="border-b border-black px-4 py-2 font-semibold">{{ k.nama_kategori }}</td>
                                 <td class="border-b border-black px-4 py-2 text-sm text-gray-600">{{ k.deskripsi || '-' }}</td>
                                 <td class="border-b border-black px-4 py-2 text-center">
+                                    <img v-if="k.image_url" :src="k.image_url" :alt="k.nama_kategori"
+                                         class="w-16 h-12 object-cover rounded mx-auto" />
+                                    <span v-else class="text-gray-400 text-xs">-</span>
+                                </td>
+                                <td class="border-b border-black px-4 py-2 text-center">
                                     <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold">
-                                        {{ paketwisata.filter(p => p.kategori === k.nama_kategori).length }} paket
+                                        {{ k.jumlah_paket ?? 0 }} paket hari
                                     </span>
                                 </td>
                                 <td class="border-b border-black border-r-0 px-4 py-2 text-center space-x-2">
-                                    <a :href="`/kategori/${k.id}/paket-hari`"
+                                    <a :href="`/paket-wisata/kategori/${k.id}/paket-hari`"
                                        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-xs">
                                         Paket Hari
                                     </a>
@@ -150,7 +164,7 @@ function destroyPaket(id) {
                             </tr>
                             <!-- Pagination row placeholder -->
                             <tr>
-                                <td colspan="5" class="p-0">
+                                <td colspan="6" class="p-0">
                                     <div class="px-4 py-2 bg-blue-500 rounded-b-2xl text-sm text-black">
                                         Total: {{ kategoris?.length || 0 }} kategori
                                     </div>
@@ -277,6 +291,19 @@ function destroyPaket(id) {
                     <textarea v-model="kategoriForm.deskripsi" rows="3"
                               class="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 text-sm resize-none"
                               placeholder="Deskripsi singkat destinasi..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Gambar Kategori</label>
+                    <!-- Preview gambar lama saat edit -->
+                    <div v-if="editingKategori?.image_url && !kategoriForm.image" class="mb-2">
+                        <img :src="editingKategori.image_url" alt="Gambar saat ini"
+                             class="w-full h-32 object-cover rounded-lg border border-gray-200" />
+                        <p class="text-xs text-gray-500 mt-1">Gambar saat ini. Upload baru untuk mengganti.</p>
+                    </div>
+                    <input type="file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                           @change="e => kategoriForm.image = e.target.files[0]"
+                           class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                    <p v-if="kategoriForm.errors.image" class="text-red-500 text-xs mt-1">{{ kategoriForm.errors.image }}</p>
                 </div>
                 <div class="flex gap-3 pt-2">
                     <button type="submit" :disabled="kategoriForm.processing"

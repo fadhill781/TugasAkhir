@@ -12,28 +12,16 @@ class MidtransController extends Controller
 {
     public function index()
     {
-        // Get all categories with their first paket wisata image as representative
-        $kategoris = \App\Models\Kategori::with(['paketHaris.paketWisatas' => function($query) {
-                $query->orderBy('id', 'asc')->limit(1);
-            }])
+        $kategoris = \App\Models\Kategori::withCount('paketHaris')
             ->get()
             ->map(function($kategori) {
-                // Get first paket wisata from any paket hari for the image
-                $firstPaketWisata = null;
-                foreach ($kategori->paketHaris as $paketHari) {
-                    if ($paketHari->paketWisatas->isNotEmpty()) {
-                        $firstPaketWisata = $paketHari->paketWisatas->first();
-                        break;
-                    }
-                }
-                
                 return [
-                    'id' => $kategori->id,
+                    'id'            => $kategori->id,
                     'nama_kategori' => $kategori->nama_kategori,
-                    'deskripsi' => $kategori->deskripsi,
-                    'jumlah_paket' => $kategori->paketHaris()->count(),
-                    'image_url' => $firstPaketWisata && $firstPaketWisata->image 
-                        ? asset('storage/uploads/admin/paket_wisata/' . $firstPaketWisata->image) 
+                    'deskripsi'     => $kategori->deskripsi,
+                    'jumlah_paket'  => $kategori->paket_haris_count,
+                    'image_url'     => $kategori->image
+                        ? asset('storage/uploads/admin/kategori/' . $kategori->image)
                         : null,
                 ];
             })
@@ -281,6 +269,45 @@ class MidtransController extends Controller
         return redirect()->route('checkout', ['id' => $paketWisata->id]);
     }
 
+    public function resumeCheckout($pesananId)
+    {
+        $pesanan = \App\Models\Pesanan::with('paketHari.kategori')->findOrFail($pesananId);
+
+        // Pastikan pesanan milik user yang login
+        if ($pesanan->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Ambil paket wisata pertama dari paket_hari ini untuk keperluan tampilan
+        $paketWisata = PaketWisata::where('paket_hari_id', $pesanan->paket_hari_id)->first();
+
+        if (!$paketWisata) {
+            return redirect()->route('pesanan.history')->with('error', 'Paket wisata tidak ditemukan.');
+        }
+
+        $kategoriNama = $pesanan->paketHari?->kategori?->nama_kategori ?? 'Paket Wisata';
+        $durasiHari   = $pesanan->paketHari?->durasi_hari ?? '';
+
+        $packageWithBooking = array_merge($paketWisata->toArray(), [
+            'nama_wisata'      => $kategoriNama . ($durasiHari ? " ({$durasiHari} Hari)" : ''),
+            'harga'            => $pesanan->total,
+            'booking_info'     => [
+                'nama'              => $pesanan->nama,
+                'email'             => $pesanan->email,
+                'telepon'           => $pesanan->telepon,
+                'jumlah_orang'      => $pesanan->jumlah_orang,
+                'tanggal_berangkat' => $pesanan->tanggal_berangkat,
+                'catatan'           => $pesanan->catatan,
+                'total_harga'       => $pesanan->total,
+            ],
+        ]);
+
+        return Inertia::render('Checkout', [
+            'package'  => $packageWithBooking,
+            'order_id' => $pesanan->order_id,
+        ]);
+    }
+
     public function checkout($id)
     {
         $package = PaketWisata::findOrFail($id);
@@ -370,7 +397,6 @@ class MidtransController extends Controller
             $oldStatus = $pesanan->status;
             $newStatus = $oldStatus;
 
-            // Update status based on transaction status
             if ($transactionStatus == 'capture') {
                 if ($fraudStatus == 'accept') {
                     // Payment success

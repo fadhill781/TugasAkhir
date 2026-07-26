@@ -15,7 +15,7 @@ class SuperAdminMiddleware
         }
 
         if (Auth::user()->role !== 'superadmin') {
-            return redirect('/superadmin/users')->with('error', 'Akses ditolak. Halaman khusus superadmin.');
+            return redirect('/paket-wisata')->with('error', 'Akses ditolak. Halaman khusus superadmin.');
         }
 
         return $next($request);

@@ -15,9 +15,9 @@ const perPage = ref(10);
 const searchQuery = ref('');
 
 const filteredMobil = computed(() => {
-    if (!searchQuery.value) return props.mobil;
-
-    return props.mobil.filter(car =>
+    const sorted = [...props.mobil].sort((a, b) => b.id - a.id);
+    if (!searchQuery.value) return sorted;
+    return sorted.filter(car =>
         car.nama.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
 });
@@ -52,7 +52,7 @@ function show(id) {
 
 function destroy(id) {
     if (confirm('Are you sure you want to delete this vehicle?')) {
-        router.delete('/mobil/' + id);
+        router.post('/mobil/' + id, { _method: 'DELETE' });
     }
 }
 </script>

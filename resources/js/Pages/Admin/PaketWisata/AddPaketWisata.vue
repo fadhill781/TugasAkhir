@@ -22,7 +22,7 @@ const filteredPaketHaris = computed(() => {
 
 onMounted(async () => {
     try {
-        const response = await fetch('/api/kategoris');
+        const response = await fetch('/api/paket-wisata/kategoris');
         kategoris.value = await response.json();
     } catch (error) {
         console.error('Error fetching kategoris:', error);
@@ -37,7 +37,7 @@ async function loadPaketHaris(kategoriId) {
     }
     
     try {
-        const response = await fetch(`/api/kategoris/${kategoriId}/paket-haris`);
+        const response = await fetch(`/api/paket-wisata/kategoris/${kategoriId}/paket-haris`);
         paketHaris.value = await response.json();
     } catch (error) {
         console.error('Error fetching paket haris:', error);

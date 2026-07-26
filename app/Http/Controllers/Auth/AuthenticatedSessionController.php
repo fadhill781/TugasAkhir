@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Log;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): Response
     {
         return Inertia::render('Auth/Login', [
@@ -25,9 +22,6 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
 {
     Log::info('Login attempt', ['email' => $request->email]);
@@ -59,8 +53,8 @@ class AuthenticatedSessionController extends Controller
         }
 
         if ($user->role === 'admin') {
-            Log::info('Redirecting admin to /pesanan');
-            return redirect()->intended('/pesanan');
+            Log::info('Redirecting admin to /admin/dashboard');
+            return redirect()->intended('/admin/dashboard');
         }
 
         Log::info('Redirecting user to /homepage');
@@ -71,9 +65,6 @@ class AuthenticatedSessionController extends Controller
     }
 }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();

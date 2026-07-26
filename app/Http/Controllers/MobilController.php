@@ -50,7 +50,7 @@ class MobilController extends Controller
 
     public function mobil()
     {
-        $mobil = Mobil::all();
+        $mobil = Mobil::orderByDesc('id')->get();
         return Inertia::render('Admin/Mobil/Mobil', [     
             'mobil' => $mobil
         ]);

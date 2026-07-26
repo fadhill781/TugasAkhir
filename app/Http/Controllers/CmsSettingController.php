@@ -13,25 +13,16 @@ class CmsSettingController extends Controller
     {
         $setting = CmsSetting::first();
 
-        $kategoris = \App\Models\Kategori::with(['paketHaris.paketWisatas' => function($query) {
-                $query->orderBy('id', 'asc')->limit(1);
-            }])
+        $kategoris = \App\Models\Kategori::withCount('paketHaris')
             ->get()
             ->map(function($kategori) {
-                $firstPaketWisata = null;
-                foreach ($kategori->paketHaris as $paketHari) {
-                    if ($paketHari->paketWisatas->isNotEmpty()) {
-                        $firstPaketWisata = $paketHari->paketWisatas->first();
-                        break;
-                    }
-                }
                 return [
-                    'id' => $kategori->id,
+                    'id'            => $kategori->id,
                     'nama_kategori' => $kategori->nama_kategori,
-                    'deskripsi' => $kategori->deskripsi,
-                    'jumlah_paket' => $kategori->paketHaris()->count(),
-                    'image_url' => $firstPaketWisata && $firstPaketWisata->image
-                        ? asset('storage/uploads/admin/paket_wisata/' . $firstPaketWisata->image)
+                    'deskripsi'     => $kategori->deskripsi,
+                    'jumlah_paket'  => $kategori->paket_haris_count,
+                    'image_url'     => $kategori->image
+                        ? asset('storage/uploads/admin/kategori/' . $kategori->image)
                         : null,
                 ];
             })
@@ -212,35 +203,25 @@ class CmsSettingController extends Controller
         return redirect()->route('cmssetting.index')->with('success', 'Setting berhasil dihapus.');
     }
 
-public function homepage()
-{
-    $setting = CmsSetting::first();
+    public function homepage()
+    {
+        $setting = CmsSetting::first();
     
-    // Kategoris dengan gambar
-    $kategoris = \App\Models\Kategori::with(['paketHaris.paketWisatas' => function($query) {
-            $query->orderBy('id', 'asc')->limit(1);
-        }])
-        ->get()
-        ->map(function($kategori) {
-            $firstPaketWisata = null;
-            foreach ($kategori->paketHaris as $paketHari) {
-                if ($paketHari->paketWisatas->isNotEmpty()) {
-                    $firstPaketWisata = $paketHari->paketWisatas->first();
-                    break;
-                }
-            }
-            return [
-                'id' => $kategori->id,
-                'nama_kategori' => $kategori->nama_kategori,
-                'deskripsi' => $kategori->deskripsi,
-                'jumlah_paket' => $kategori->paketHaris()->count(),
-                'image_url' => $firstPaketWisata && $firstPaketWisata->image 
-                    ? asset('storage/uploads/admin/paket_wisata/' . $firstPaketWisata->image) 
-                    : null,
-            ];
-        })
-        ->take(3)
-        ->toArray();
+        $kategoris = \App\Models\Kategori::withCount('paketHaris')
+            ->get()
+            ->map(function($kategori) {
+                return [
+                    'id'            => $kategori->id,
+                    'nama_kategori' => $kategori->nama_kategori,
+                    'deskripsi'     => $kategori->deskripsi,
+                    'jumlah_paket'  => $kategori->paket_haris_count,
+                    'image_url'     => $kategori->image
+                        ? asset('storage/uploads/admin/kategori/' . $kategori->image)
+                        : null,
+                ];
+            })
+            ->take(3)
+            ->toArray();
 
     // Paket populer (ambil dari paket wisata terbaru)
     $paketPopuler = \App\Models\PaketWisata::with('paketHari.kategori')

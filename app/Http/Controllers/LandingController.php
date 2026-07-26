@@ -13,7 +13,6 @@ class LandingController extends Controller
 {
     public function index()
     {
-        // Ambil data setting pertama
         $setting = Setting::first();
 
         return Inertia::render('Landing', [

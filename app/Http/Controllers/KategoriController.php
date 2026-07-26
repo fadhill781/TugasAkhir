@@ -6,6 +6,7 @@ use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class KategoriController extends Controller
 {
@@ -18,6 +19,10 @@ class KategoriController extends Controller
                     'id' => $kategori->id,
                     'nama_kategori' => $kategori->nama_kategori,
                     'deskripsi' => $kategori->deskripsi,
+                    'image' => $kategori->image,
+                    'image_url' => $kategori->image
+                        ? asset('storage/uploads/admin/kategori/' . $kategori->image)
+                        : null,
                     'jumlah_paket' => $kategori->paket_haris_count,
                     'created_at' => $kategori->created_at,
                     'updated_at' => $kategori->updated_at,
@@ -38,39 +43,66 @@ class KategoriController extends Controller
     {
         $validated = $request->validate([
             'nama_kategori' => 'required|string|max:255|unique:kategoris,nama_kategori',
-            'deskripsi' => 'nullable|string',
+            'deskripsi'     => 'nullable|string',
+            'image'         => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
+        if ($request->hasFile('image')) {
+            $image     = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->storeAs('uploads/admin/kategori', $imageName, 'public');
+            $validated['image'] = $imageName;
+        }
+
         Kategori::create($validated);
-        return Redirect::route('kategori.index');
+        return Redirect::route('paketwisata.index');
     }
 
     public function edit($id)
     {
         $kategori = Kategori::findOrFail($id);
         return Inertia::render('Admin/PaketWisata/Kategori/Edit', [
-            'kategori' => $kategori
+            'kategori' => array_merge($kategori->toArray(), [
+                'image_url' => $kategori->image
+                    ? asset('storage/uploads/admin/kategori/' . $kategori->image)
+                    : null,
+            ]),
         ]);
     }
 
     public function update(Request $request, $id)
     {
         $kategori = Kategori::findOrFail($id);
-        
+
         $validated = $request->validate([
             'nama_kategori' => 'required|string|max:255|unique:kategoris,nama_kategori,' . $id,
-            'deskripsi' => 'nullable|string',
+            'deskripsi'     => 'nullable|string',
+            'image'         => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
+        if ($request->hasFile('image')) {
+            // Hapus gambar lama
+            if ($kategori->image) {
+                Storage::disk('public')->delete('uploads/admin/kategori/' . $kategori->image);
+            }
+            $image     = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->storeAs('uploads/admin/kategori', $imageName, 'public');
+            $validated['image'] = $imageName;
+        }
+
         $kategori->update($validated);
-        return Redirect::route('kategori.index');
+        return Redirect::route('paketwisata.index');
     }
 
     public function destroy($id)
     {
         $kategori = Kategori::findOrFail($id);
+        if ($kategori->image) {
+            Storage::disk('public')->delete('uploads/admin/kategori/' . $kategori->image);
+        }
         $kategori->delete();
-        return Redirect::route('kategori.index');
+        return Redirect::route('paketwisata.index');
     }
 
     // API endpoint untuk dropdown

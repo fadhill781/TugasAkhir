@@ -11,7 +11,7 @@ const sidebarOpen = ref(true);
 
 function deleteKategori(id) {
     if (confirm('Apakah Anda yakin ingin menghapus kategori ini?')) {
-        router.delete(`/kategori/${id}`, { preserveScroll: true });
+        router.delete(`/paket-wisata/kategori/${id}`, { preserveScroll: true });
     }
 }
 </script>
@@ -36,7 +36,7 @@ function deleteKategori(id) {
                             <h1 class="text-2xl font-bold">Kategori Wisata</h1>
                             <p class="text-sm text-gray-600">Buat kategori terlebih dahulu sebelum menambah paket wisata</p>
                         </div>
-                        <a href="/kategori/create" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <a href="/paket-wisata/kategori/create" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                             + Tambah Kategori
                         </a>
                     </div>
@@ -64,11 +64,11 @@ function deleteKategori(id) {
                                         <span class="text-blue-600 font-bold">{{ kategori.jumlah_paket || 0 }} paket</span>
                                     </td>
                                     <td class="px-4 py-3 space-x-2">
-                                        <a :href="`/kategori/${kategori.id}/paket-hari`" 
+                                        <a :href="`/paket-wisata/kategori/${kategori.id}/paket-hari`" 
                                            class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
                                             Paket Hari
                                         </a>
-                                        <a :href="`/kategori/${kategori.id}/edit`" 
+                                        <a :href="`/paket-wisata/kategori/${kategori.id}/edit`" 
                                            class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
                                             Edit
                                         </a>

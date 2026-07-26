@@ -1,6 +1,10 @@
 <script setup>
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
+
+function goBack() {
+    router.visit('/paket-wisata/kategori', { preserveState: false });
+}
 
 const props = defineProps({
     kategori: Object,
@@ -22,7 +26,8 @@ const editForm = reactive({
 });
 
 function submit() {
-    router.post(`/kategori/${props.kategori.id}/paket-hari`, form, {
+    router.post(`/paket-wisata/kategori/${props.kategori.id}/paket-hari`, form, {
+        preserveScroll: true,
         onSuccess: () => {
             form.durasi_hari = '';
             form.harga = '';
@@ -39,7 +44,8 @@ function editPaket(paket) {
 }
 
 function updatePaket(id) {
-    router.put(`/kategori/${props.kategori.id}/paket-hari/${id}`, editForm, {
+    router.put(`/paket-wisata/kategori/${props.kategori.id}/paket-hari/${id}`, editForm, {
+        preserveScroll: true,
         onSuccess: () => {
             editingId.value = null;
         }
@@ -48,7 +54,9 @@ function updatePaket(id) {
 
 function deletePaket(id) {
     if (confirm('Apakah Anda yakin ingin menghapus paket ini?')) {
-        router.delete(`/kategori/${props.kategori.id}/paket-hari/${id}`);
+        router.delete(`/paket-wisata/kategori/${props.kategori.id}/paket-hari/${id}`, {
+            preserveScroll: true,
+        });
     }
 }
 
@@ -67,9 +75,9 @@ function cancelEdit() {
                             <h1 class="text-2xl font-bold">Paket Hari - {{ kategori.nama_kategori }}</h1>
                             <p class="text-gray-600 text-sm">{{ kategori.deskripsi }}</p>
                         </div>
-                        <a href="/kategori" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                        <button @click="goBack" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                             Kembali
-                        </a>
+                        </button>
                     </div>
                     <hr class="mb-4">
                     

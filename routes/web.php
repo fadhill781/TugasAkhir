@@ -66,6 +66,7 @@ Route::get('/galeri-public', [\App\Http\Controllers\GaleriController::class, 'pu
 Route::post('/booking/draft', [MidtransController::class, 'saveDraft'])->middleware('auth')->name('booking.draft');
 Route::post('/booking', [MidtransController::class, 'storeBooking'])->name('booking.store');
 Route::get('/checkout/success', [MidtransController::class, 'success'])->name('checkout.success');
+Route::get('/checkout/resume/{pesananId}', [MidtransController::class, 'resumeCheckout'])->middleware('auth')->name('checkout.resume');
 Route::get('/checkout/{id}', [MidtransController::class, 'checkout'])->name('checkout');
 
 Route::post('/midtrans/pay', [MidtransController::class, 'createPayment'])
@@ -103,10 +104,45 @@ Route::middleware(['auth', UserMiddleware::class])->group(function () {
 
 Route::middleware(['auth', AdminMiddleware::class])->group(function () {
 
+    // ===== HANYA SUPERADMIN =====
+    Route::middleware('superadmin')->group(function () {
+        Route::get('/admin/transaksi-keuangan', [\App\Http\Controllers\TransaksiKeuanganController::class, 'index'])->name('transaksi.keuangan');
+        Route::get('/admin/transaksi-baru', [\App\Http\Controllers\TransaksiKeuanganController::class, 'create'])->name('transaksi.keuangan.create');
+        Route::post('/admin/transaksi-baru', [\App\Http\Controllers\TransaksiKeuanganController::class, 'store'])->name('transaksi.keuangan.store');
+
+        Route::get('/CMS/Setting/AddSetting', [CmsSettingController::class, 'addcmssetting'])->name('cmssetting.add');
+        Route::post('/cms-setting', [CmsSettingController::class, 'store'])->name('cmssetting.store');
+        Route::get('/cms-setting', [CmsSettingController::class, 'cmssetting'])->name('cmssetting.index');
+        Route::get('/cms-setting/{id}/edit', [CmsSettingController::class, 'edit'])->name('cmssetting.edit');
+        Route::put('/cms-setting/{id}', [CmsSettingController::class, 'update'])->name('cmssetting.update');
+        Route::delete('/cms-setting/{id}', [CmsSettingController::class, 'destroy'])->name('cmssetting.destroy');
+
+        Route::get('/testimoni', [App\Http\Controllers\TestimoniController::class, 'index'])->name('testimoni.index');
+        Route::get('/testimoni/create', [App\Http\Controllers\TestimoniController::class, 'create'])->name('testimoni.create');
+        Route::post('/testimoni', [App\Http\Controllers\TestimoniController::class, 'store'])->name('testimoni.store');
+        Route::get('/testimoni/{id}/edit', [App\Http\Controllers\TestimoniController::class, 'edit'])->name('testimoni.edit');
+        Route::put('/testimoni/{id}', [App\Http\Controllers\TestimoniController::class, 'update'])->name('testimoni.update');
+        Route::delete('/testimoni/{id}', [App\Http\Controllers\TestimoniController::class, 'destroy'])->name('testimoni.destroy');
+
+        Route::get('add-pesanan', [PesananController::class, 'addpesanan']);
+        Route::post('add-pesanan', [PesananController::class, 'store']);
+        Route::get('/pesanan', [PesananController::class, 'pesanan'])->name('pesanan.index');
+        Route::get('pesanan/{pesanan}/edit', [PesananController::class, 'editpesanan']);
+        Route::put('/pesanan/{pesanan}', [PesananController::class, 'update']);
+        Route::put('/pesanan/{pesanan}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
+        Route::get('/pesanan/{id}/invoice', [PesananController::class, 'generateInvoice'])->name('pesanan.invoice');
+        Route::delete('/pesanan/{pesanan}', [PesananController::class, 'destroy']);
+
+        Route::get('/galeri-admin', [\App\Http\Controllers\GaleriController::class, 'adminIndex'])->name('admin.galeri.index');
+        Route::get('/galeri-admin/create', [\App\Http\Controllers\GaleriController::class, 'create'])->name('admin.galeri.create');
+        Route::post('/galeri-admin', [\App\Http\Controllers\GaleriController::class, 'store'])->name('admin.galeri.store');
+        Route::get('/galeri-admin/{id}/edit', [\App\Http\Controllers\GaleriController::class, 'edit'])->name('admin.galeri.edit');
+        Route::put('/galeri-admin/{id}', [\App\Http\Controllers\GaleriController::class, 'update'])->name('admin.galeri.update');
+        Route::delete('/galeri-admin/{id}', [\App\Http\Controllers\GaleriController::class, 'destroy'])->name('admin.galeri.destroy');
+    });
+
+    // ===== ADMIN & SUPERADMIN =====
     Route::get('/admin/dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/transaksi-keuangan', [\App\Http\Controllers\TransaksiKeuanganController::class, 'index'])->name('transaksi.keuangan');
-    Route::get('/admin/transaksi-baru', [\App\Http\Controllers\TransaksiKeuanganController::class, 'create'])->name('transaksi.keuangan.create');
-    Route::post('/admin/transaksi-baru', [\App\Http\Controllers\TransaksiKeuanganController::class, 'store'])->name('transaksi.keuangan.store');
 
     Route::get('add-paket-wisata', [PaketWisataController::class, 'addpaketwisata']);
     Route::post('add-paket-wisata', [PaketWisataController::class, 'store']);
@@ -120,47 +156,22 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/mobil', [MobilController::class, 'mobil'])->name('mobil.index');
     Route::get('mobil/{mobil}/edit', [MobilController::class, 'editmobil']);
     Route::put('/mobil/{mobil}', [MobilController::class, 'update']);
+    Route::post('/mobil/{id}', [MobilController::class, 'destroy']);
     Route::delete('/mobil/{mobil}', [MobilController::class, 'destroy']);
 
-    Route::get('/CMS/Setting/AddSetting', [CmsSettingController::class, 'addcmssetting'])->name('cmssetting.add');
-    Route::post('/cms-setting', [CmsSettingController::class, 'store'])->name('cmssetting.store');
-    Route::get('/cms-setting', [CmsSettingController::class, 'cmssetting'])->name('cmssetting.index');
-    Route::get('/cms-setting/{id}/edit', [CmsSettingController::class, 'edit'])->name('cmssetting.edit');
-    Route::put('/cms-setting/{id}', [CmsSettingController::class, 'update'])->name('cmssetting.update');
-    Route::delete('/cms-setting/{id}', [CmsSettingController::class, 'destroy'])->name('cmssetting.destroy');
+    Route::get('/paket-wisata/kategori', [App\Http\Controllers\KategoriController::class, 'index'])->name('kategori.index');
+    Route::get('/paket-wisata/kategori/create', [App\Http\Controllers\KategoriController::class, 'create'])->name('kategori.create');
+    Route::post('/paket-wisata/kategori', [App\Http\Controllers\KategoriController::class, 'store'])->name('kategori.store');
+    Route::get('/paket-wisata/kategori/{id}/edit', [App\Http\Controllers\KategoriController::class, 'edit'])->name('kategori.edit');
+    Route::put('/paket-wisata/kategori/{id}', [App\Http\Controllers\KategoriController::class, 'update'])->name('kategori.update');
+    Route::delete('/paket-wisata/kategori/{id}', [App\Http\Controllers\KategoriController::class, 'destroy'])->name('kategori.destroy');
+    Route::get('/api/paket-wisata/kategoris', [App\Http\Controllers\KategoriController::class, 'getKategoris'])->name('api.kategoris');
+    Route::get('/api/paket-wisata/kategoris/{id}/paket-haris', [App\Http\Controllers\KategoriController::class, 'getPaketHaris'])->name('api.kategoris.paket-haris');
 
-    // Testimoni Routes
-    Route::get('/testimoni', [App\Http\Controllers\TestimoniController::class, 'index'])->name('testimoni.index');
-    Route::get('/testimoni/create', [App\Http\Controllers\TestimoniController::class, 'create'])->name('testimoni.create');
-    Route::post('/testimoni', [App\Http\Controllers\TestimoniController::class, 'store'])->name('testimoni.store');
-    Route::get('/testimoni/{id}/edit', [App\Http\Controllers\TestimoniController::class, 'edit'])->name('testimoni.edit');
-    Route::put('/testimoni/{id}', [App\Http\Controllers\TestimoniController::class, 'update'])->name('testimoni.update');
-    Route::delete('/testimoni/{id}', [App\Http\Controllers\TestimoniController::class, 'destroy'])->name('testimoni.destroy');
-
-    // Kategori Routes (semua berjalan di /paket-wisata)
-    Route::get('/kategori', [App\Http\Controllers\KategoriController::class, 'index'])->name('kategori.index');
-    Route::get('/kategori/create', [App\Http\Controllers\KategoriController::class, 'create'])->name('kategori.create');
-    Route::post('/kategori', [App\Http\Controllers\KategoriController::class, 'store'])->name('kategori.store');
-    Route::get('/kategori/{id}/edit', [App\Http\Controllers\KategoriController::class, 'edit'])->name('kategori.edit');
-    Route::put('/kategori/{id}', [App\Http\Controllers\KategoriController::class, 'update'])->name('kategori.update');
-    Route::delete('/kategori/{id}', [App\Http\Controllers\KategoriController::class, 'destroy'])->name('kategori.destroy');
-    Route::get('/api/kategoris', [App\Http\Controllers\KategoriController::class, 'getKategoris'])->name('api.kategoris');
-    Route::get('/api/kategoris/{id}/paket-haris', [App\Http\Controllers\KategoriController::class, 'getPaketHaris'])->name('api.kategoris.paket-haris');
-    
-    // Paket Hari Routes
-    Route::get('/kategori/{id}/paket-hari', [App\Http\Controllers\KategoriController::class, 'paketHari'])->name('kategori.paket-hari');
-    Route::post('/kategori/{id}/paket-hari', [App\Http\Controllers\KategoriController::class, 'storePaketHari'])->name('kategori.paket-hari.store');
-    Route::put('/kategori/{kategoriId}/paket-hari/{paketId}', [App\Http\Controllers\KategoriController::class, 'updatePaketHari'])->name('kategori.paket-hari.update');
-    Route::delete('/kategori/{kategoriId}/paket-hari/{paketId}', [App\Http\Controllers\KategoriController::class, 'destroyPaketHari'])->name('kategori.paket-hari.destroy');
-
-    Route::get('add-pesanan', [PesananController::class, 'addpesanan']);
-    Route::post('add-pesanan', [PesananController::class, 'store']);
-    Route::get('/pesanan', [PesananController::class, 'pesanan'])->name('pesanan.index');
-    Route::get('pesanan/{pesanan}/edit', [PesananController::class, 'editpesanan']);
-    Route::put('/pesanan/{pesanan}', [PesananController::class, 'update']);
-    Route::put('/pesanan/{pesanan}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
-    Route::get('/pesanan/{id}/invoice', [PesananController::class, 'generateInvoice'])->name('pesanan.invoice');
-    Route::delete('/pesanan/{pesanan}', [PesananController::class, 'destroy']);
+    Route::get('/paket-wisata/kategori/{id}/paket-hari', [App\Http\Controllers\KategoriController::class, 'paketHari'])->name('kategori.paket-hari');
+    Route::post('/paket-wisata/kategori/{id}/paket-hari', [App\Http\Controllers\KategoriController::class, 'storePaketHari'])->name('kategori.paket-hari.store');
+    Route::put('/paket-wisata/kategori/{kategoriId}/paket-hari/{paketId}', [App\Http\Controllers\KategoriController::class, 'updatePaketHari'])->name('kategori.paket-hari.update');
+    Route::delete('/paket-wisata/kategori/{kategoriId}/paket-hari/{paketId}', [App\Http\Controllers\KategoriController::class, 'destroyPaketHari'])->name('kategori.paket-hari.destroy');
 
     // Galeri Routes (Admin)
     Route::get('/galeri-admin', [\App\Http\Controllers\GaleriController::class, 'adminIndex'])->name('admin.galeri.index');

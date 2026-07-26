@@ -22,7 +22,7 @@ const kategoris = ref([]);
 
 onMounted(async () => {
     try {
-        const response = await fetch('/api/kategoris');
+        const response = await fetch('/api/paket-wisata/kategoris');
         kategoris.value = await response.json();
     } catch (error) {
         console.error('Error fetching kategoris:', error);

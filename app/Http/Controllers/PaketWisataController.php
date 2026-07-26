@@ -54,7 +54,7 @@ class PaketWisataController extends Controller
 
     public function paketwisata()
     {
-        $paketwisata = PaketWisata::with('paketHari.kategori')->get()->map(function($pw) {
+        $paketwisata = PaketWisata::with('paketHari.kategori')->orderByDesc('id')->get()->map(function($pw) {
             return [
                 'id' => $pw->id,
                 'nama_wisata' => $pw->nama_wisata,
@@ -67,7 +67,17 @@ class PaketWisataController extends Controller
             ];
         });
 
-        $kategoris = \App\Models\Kategori::orderBy('nama_kategori')->get();
+        $kategoris = \App\Models\Kategori::withCount('paketHaris')->orderBy('nama_kategori')->get()
+            ->map(fn($k) => [
+                'id'           => $k->id,
+                'nama_kategori'=> $k->nama_kategori,
+                'deskripsi'    => $k->deskripsi,
+                'image'        => $k->image,
+                'image_url'    => $k->image
+                    ? asset('storage/uploads/admin/kategori/' . $k->image)
+                    : null,
+                'jumlah_paket' => $k->paket_haris_count,
+            ]);
 
         return Inertia::render('Admin/PaketWisata/PaketWisata', [     
             'paketwisata' => $paketwisata,

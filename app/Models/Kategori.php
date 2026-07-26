@@ -9,6 +9,7 @@ class Kategori extends Model
     protected $fillable = [
         'nama_kategori',
         'deskripsi',
+        'image',
     ];
 
     public function paketHaris()

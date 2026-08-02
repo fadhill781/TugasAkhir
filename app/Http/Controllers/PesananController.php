@@ -15,22 +15,55 @@ class PesananController extends Controller
 {
     public function addpesanan()
     {
-        return Inertia::render('Admin/Pesanan/AddPesanan', []);
+        $kategoris = \App\Models\Kategori::with(['paketHaris' => function($q) {
+            $q->orderBy('durasi_hari', 'asc');
+        }])->get()->map(function($k) {
+            return [
+                'id'            => $k->id,
+                'nama_kategori' => $k->nama_kategori,
+                'paket_haris'   => $k->paketHaris->map(fn($ph) => [
+                    'id'          => $ph->id,
+                    'durasi_hari' => $ph->durasi_hari,
+                    'harga'       => $ph->harga,
+                ]),
+            ];
+        });
+
+        return Inertia::render('Admin/Pesanan/AddPesanan', [
+            'kategoris' => $kategoris,
+        ]);
     }
 
     public function store(Request $request)
-{
-   $validated = $request->validate([
-    'nama' => 'required|string|max:255',
-    'waktu' => 'required|date',
-    'total' => 'required|integer|min:0',
-    'aksi' => 'nullable|string|max:255',
-]);
+    {
+        $validated = $request->validate([
+            'paket_hari_id'     => 'nullable|exists:paket_haris,id',
+            'nama'              => 'required|string|max:255',
+            'email'             => 'nullable|email|max:255',
+            'telepon'           => 'nullable|string|max:20',
+            'jumlah_orang'      => 'nullable|integer|min:1',
+            'tanggal_berangkat' => 'nullable|date',
+            'catatan'           => 'nullable|string',
+            'waktu'             => 'required|date',
+            'total'             => 'required|integer|min:0',
+            'status'            => 'required|in:pending,confirmed,cancelled',
+        ]);
 
-    Pesanan::create($validated);
+        $aksi = match($validated['status']) {
+            'confirmed' => 'Pembayaran Lunas',
+            'pending'   => 'Menunggu Pembayaran',
+            'cancelled' => 'Dibatalkan',
+            default     => 'Menunggu Pembayaran',
+        };
 
-    return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil ditambahkan.');
-}
+        $validated['aksi']     = $aksi;
+        $validated['order_id'] = 'ORDER-' . time() . '-MANUAL';
+        $validated['is_draft'] = false;
+
+        Pesanan::create($validated);
+
+        return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil ditambahkan.');
+    }
 
 
     public function update(Request $request, Pesanan $pesanan)

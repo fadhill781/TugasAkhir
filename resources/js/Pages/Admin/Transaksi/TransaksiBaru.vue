@@ -19,23 +19,65 @@ const form = reactive({
 
 // ── Items ──
 const items = ref([
-    { deskripsi: '', keterangan: '', qty: 1, harga: 0 },
+    { deskripsi: '', keterangan: '', harga: 0, hargaDisplay: '', hargaFocused: false },
 ]);
 
 function addItem() {
-    items.value.push({ deskripsi: '', keterangan: '', qty: 1, harga: 0 });
+    items.value.push({ deskripsi: '', keterangan: '', harga: 0, hargaDisplay: '', hargaFocused: false });
 }
 
 function removeItem(idx) {
     if (items.value.length > 1) items.value.splice(idx, 1);
 }
 
+// ── Helpers format Rp ──
+function parseRp(str) {
+    return parseInt(String(str).replace(/[^\d]/g, ''), 10) || 0;
+}
+function toRpDisplay(val) {
+    const n = Number(val);
+    if (!n) return '';
+    return n.toLocaleString('id-ID');
+}
+
+// ── Harga item: focus → raw number, blur → formatted ──
+function onHargaFocus(item) {
+    item.hargaFocused = true;
+    item.hargaDisplay = item.harga ? String(item.harga) : '';
+}
+function onHargaInput(item, e) {
+    const raw = e.target.value.replace(/[^\d]/g, '');
+    item.hargaDisplay = raw;
+    item.harga = parseInt(raw, 10) || 0;
+}
+function onHargaBlur(item) {
+    item.hargaFocused = false;
+    item.hargaDisplay = toRpDisplay(item.harga);
+}
+
+// ── DP input ──
+const dpDisplay   = ref('');
+const dpFocused   = ref(false);
+function onDpFocus() {
+    dpFocused.value   = true;
+    dpDisplay.value   = form.dp ? String(form.dp) : '';
+}
+function onDpInput(e) {
+    const raw = e.target.value.replace(/[^\d]/g, '');
+    dpDisplay.value = raw;
+    form.dp = parseInt(raw, 10) || 0;
+}
+function onDpBlur() {
+    dpFocused.value = false;
+    dpDisplay.value = toRpDisplay(form.dp);
+}
+
 // ── Totals ──
 const subtotal = computed(() =>
-    items.value.reduce((s, i) => s + Number(i.qty) * Number(i.harga), 0)
+    items.value.reduce((s, i) => s + Number(i.harga), 0)
 );
-const dpValue    = computed(() => Number(form.dp) || 0);
-const sisaBayar  = computed(() => subtotal.value - dpValue.value);
+const dpValue   = computed(() => Number(form.dp) || 0);
+const sisaBayar = computed(() => subtotal.value - dpValue.value);
 
 function formatRp(v) {
     return 'Rp. ' + Number(v).toLocaleString('id-ID');
@@ -49,9 +91,17 @@ const canPrint = computed(() =>
     items.value.every(i => i.deskripsi.trim())
 );
 
-// ── Print: POST form ke blade, buka di tab baru ──
+// ── Print ──
 function printInvoice() {
-    const payload = { ...form, items: items.value };
+    const payload = {
+        ...form,
+        items: items.value.map(i => ({
+            deskripsi:  i.deskripsi,
+            keterangan: i.keterangan,
+            qty:        1,
+            harga:      i.harga,
+        })),
+    };
 
     const el = document.createElement('form');
     el.method = 'POST';
@@ -159,31 +209,37 @@ const statusOptions = ['Lunas', 'Pending', 'DP'];
 
                             <!-- Header kolom -->
                             <div class="hidden sm:grid grid-cols-12 gap-2 mb-1 px-1">
-                                <div class="col-span-4 text-xs font-semibold text-gray-400 uppercase">Deskripsi</div>
-                                <div class="col-span-3 text-xs font-semibold text-gray-400 uppercase">Keterangan</div>
-                                <div class="col-span-2 text-xs font-semibold text-gray-400 uppercase text-center">Qty</div>
-                                <div class="col-span-2 text-xs font-semibold text-gray-400 uppercase text-right">Harga (Rp)</div>
+                                <div class="col-span-5 text-xs font-semibold text-gray-400 uppercase">Deskripsi</div>
+                                <div class="col-span-4 text-xs font-semibold text-gray-400 uppercase">Keterangan</div>
+                                <div class="col-span-2 text-xs font-semibold text-gray-400 uppercase text-right">Harga</div>
                                 <div class="col-span-1"></div>
                             </div>
 
                             <!-- Rows -->
                             <div v-for="(item, idx) in items" :key="idx"
                                 class="grid grid-cols-12 gap-2 mb-2 items-start">
-                                <div class="col-span-12 sm:col-span-4">
+                                <div class="col-span-12 sm:col-span-5">
                                     <input v-model="item.deskripsi" type="text" placeholder="Nama paket / layanan"
                                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500" />
                                 </div>
-                                <div class="col-span-12 sm:col-span-3">
+                                <div class="col-span-12 sm:col-span-4">
                                     <input v-model="item.keterangan" type="text" placeholder="Keterangan (opsional)"
                                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500" />
                                 </div>
-                                <div class="col-span-4 sm:col-span-2">
-                                    <input v-model.number="item.qty" type="number" min="1"
-                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-center focus:ring-2 focus:ring-blue-500" />
-                                </div>
-                                <div class="col-span-7 sm:col-span-2">
-                                    <input v-model.number="item.harga" type="number" min="0" placeholder="0"
-                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-right focus:ring-2 focus:ring-blue-500" />
+                                <!-- Harga dengan format Rp. -->
+                                <div class="col-span-11 sm:col-span-2">
+                                    <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                                        <span class="px-2 py-2 bg-gray-50 text-gray-500 text-xs font-semibold border-r border-gray-300 whitespace-nowrap">Rp.</span>
+                                        <input
+                                            :value="item.hargaFocused ? item.hargaDisplay : toRpDisplay(item.harga)"
+                                            @focus="onHargaFocus(item)"
+                                            @input="onHargaInput(item, $event)"
+                                            @blur="onHargaBlur(item)"
+                                            type="text"
+                                            inputmode="numeric"
+                                            placeholder="0"
+                                            class="flex-1 px-2 py-2 text-sm text-right focus:outline-none bg-white min-w-0" />
+                                    </div>
                                 </div>
                                 <div class="col-span-1 flex justify-center pt-1.5">
                                     <button @click="removeItem(idx)" type="button"
@@ -196,10 +252,19 @@ const statusOptions = ['Lunas', 'Pending', 'DP'];
 
                             <!-- DP -->
                             <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
-                                <label class="text-xs font-semibold text-gray-600 w-36 flex-shrink-0">DP / Uang Muka (Rp)</label>
-                                <input v-model.number="form.dp" type="number" min="0"
-                                    placeholder="0 — kosongkan jika tidak ada DP"
-                                    class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500" />
+                                <label class="text-xs font-semibold text-gray-600 w-36 flex-shrink-0">DP / Uang Muka</label>
+                                <div class="flex-1 flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                                    <span class="px-2 py-2 bg-gray-50 text-gray-500 text-xs font-semibold border-r border-gray-300 whitespace-nowrap">Rp.</span>
+                                    <input
+                                        :value="dpFocused ? dpDisplay : toRpDisplay(form.dp)"
+                                        @focus="onDpFocus"
+                                        @input="onDpInput"
+                                        @blur="onDpBlur"
+                                        type="text"
+                                        inputmode="numeric"
+                                        placeholder="0 — kosongkan jika tidak ada DP"
+                                        class="flex-1 px-3 py-2 text-sm focus:outline-none bg-white" />
+                                </div>
                             </div>
                         </div>
 

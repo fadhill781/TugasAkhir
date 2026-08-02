@@ -24,6 +24,7 @@ const createForm = useForm({
 
 // Password reset form
 const passwordForm = useForm({
+    _method: 'PUT',
     password: '',
     password_confirmation: '',
 });
@@ -65,7 +66,7 @@ function submitCreate() {
 
 function updateRole(user, newRole) {
     if (!confirm(`Ubah role ${user.name} menjadi ${newRole}?`)) return;
-    router.put(route('superadmin.users.role', user.id), { role: newRole }, {
+    router.post(`/superadmin/users/${user.id}/role`, { _method: 'PUT', role: newRole }, {
         preserveScroll: true,
     });
 }
@@ -77,7 +78,7 @@ function openPasswordModal(user) {
 }
 
 function submitPassword() {
-    passwordForm.put(route('superadmin.users.password', selectedUser.value.id), {
+    passwordForm.post(`/superadmin/users/${selectedUser.value.id}/password`, {
         onSuccess: () => {
             showPasswordModal.value = false;
             passwordForm.reset();
@@ -88,7 +89,7 @@ function submitPassword() {
 function toggleActive(user) {
     const action = user.is_active ? 'menonaktifkan' : 'mengaktifkan';
     if (!confirm(`${action} akun ${user.name}?`)) return;
-    router.put(route('superadmin.users.toggle', user.id), {}, {
+    router.post(`/superadmin/users/${user.id}/toggle-active`, { _method: 'PUT' }, {
         preserveScroll: true,
     });
 }
@@ -112,7 +113,7 @@ function viewProfile(user) {
                         <p class="text-gray-500 text-sm mt-1">Kelola akun admin dan user sistem</p>
                     </div>
                     <button @click="showCreateModal = true"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg transition flex items-center gap-2">
+                            class="bg-green-500 hover:bg-green-600 text-white font-semibold px-5 py-2 rounded-lg transition flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
@@ -158,7 +159,7 @@ function viewProfile(user) {
                     <div class="flex gap-2">
                         <button v-for="f in [{v:'all',l:'Semua'},{v:'superadmin',l:'Super Admin'},{v:'admin',l:'Admin'},{v:'user',l:'User'}]"
                                 :key="f.v" @click="filterRole = f.v"
-                                :class="['px-4 py-2 rounded-lg border-2 text-sm font-bold transition', filterRole === f.v ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400']">
+                                :class="['px-4 py-2 rounded-lg border-2 text-sm font-bold transition', filterRole === f.v ? 'bg-[#1E3A8A] text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400']">
                             {{ f.l }}
                         </button>
                     </div>
@@ -168,7 +169,7 @@ function viewProfile(user) {
                 <div class="bg-white rounded-xl shadow overflow-hidden">
                     <table class="min-w-full border-collapse">
                         <thead>
-                            <tr class="bg-blue-600 text-white text-sm">
+                            <tr class="bg-[#1E3A8A] text-white text-sm">
                                 <th class="px-4 py-3 text-left rounded-tl-xl">No</th>
                                 <th class="px-4 py-3 text-left">Nama</th>
                                 <th class="px-4 py-3 text-left">Email</th>

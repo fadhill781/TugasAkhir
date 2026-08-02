@@ -105,7 +105,7 @@ function destroyPaket(id) {
                             <p class="text-xs text-gray-500">Buat kategori terlebih dahulu sebelum menambah paket wisata</p>
                         </div>
                         <button @click="openAddKategori"
-                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-semibold">
+                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-sm font-semibold">
                             + Tambah Kategori
                         </button>
                     </div>
@@ -119,12 +119,12 @@ function destroyPaket(id) {
                     <table class="min-w-full border-collapse">
                         <thead>
                             <tr>
-                                <th class="border-b border-black border-l-0 px-4 py-3 bg-blue-500 text-black rounded-tl-2xl">No</th>
-                                <th class="border-b border-black px-4 py-3 bg-blue-500 text-black">Nama Kategori</th>
-                                <th class="border-b border-black px-4 py-3 bg-blue-500 text-black">Deskripsi</th>
-                                <th class="border-b border-black px-4 py-3 bg-blue-500 text-black">Gambar</th>
-                                <th class="border-b border-black px-4 py-3 bg-blue-500 text-black">Jumlah Paket</th>
-                                <th class="border-b border-black border-r-0 px-4 py-2 bg-blue-500 text-black rounded-tr-2xl">Aksi</th>
+                                <th class="border-b border-black border-l-0 px-4 py-3 bg-[#1E3A8A] text-white rounded-tl-2xl">No</th>
+                                <th class="border-b border-black px-4 py-3 bg-[#1E3A8A] text-white">Nama Kategori</th>
+                                <th class="border-b border-black px-4 py-3 bg-[#1E3A8A] text-white">Deskripsi</th>
+                                <th class="border-b border-black px-4 py-3 bg-[#1E3A8A] text-white">Gambar</th>
+                                <th class="border-b border-black px-4 py-3 bg-[#1E3A8A] text-white">Jumlah Paket</th>
+                                <th class="border-b border-black border-r-0 px-4 py-2 bg-[#1E3A8A] text-white rounded-tr-2xl">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -165,7 +165,7 @@ function destroyPaket(id) {
                             <!-- Pagination row placeholder -->
                             <tr>
                                 <td colspan="6" class="p-0">
-                                    <div class="px-4 py-2 bg-blue-500 rounded-b-2xl text-sm text-black">
+                                    <div class="px-4 py-2 bg-[#1E3A8A] rounded-b-2xl text-sm text-white">
                                         Total: {{ kategoris?.length || 0 }} kategori
                                     </div>
                                 </td>
@@ -205,13 +205,13 @@ function destroyPaket(id) {
                     <table class="min-w-full border-collapse">
                         <thead>
                             <tr>
-                                <th class="border-b border-black border-l-0 px-4 py-4 bg-blue-500 text-black rounded-tl-2xl">No</th>
-                                <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">Nama Wisata</th>
-                                <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">Kategori</th>
-                                <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">Durasi</th>
-                                <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">Max Personil</th>
-                                <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">Gambar</th>
-                                <th class="border-b border-black border-r-0 px-4 py-2 bg-blue-500 text-black rounded-tr-2xl">Aksi</th>
+                                <th class="border-b border-black border-l-0 px-4 py-4 bg-[#1E3A8A] text-white rounded-tl-2xl">No</th>
+                                <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">Nama Wisata</th>
+                                <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">Kategori</th>
+                                <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">Durasi</th>
+                                <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">Max Personil</th>
+                                <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">Gambar</th>
+                                <th class="border-b border-black border-r-0 px-4 py-2 bg-[#1E3A8A] text-white rounded-tr-2xl">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -246,20 +246,20 @@ function destroyPaket(id) {
                             </tr>
                             <tr>
                                 <td colspan="7" class="p-0">
-                                    <div class="flex items-center justify-between px-4 py-3 bg-blue-500 rounded-b-2xl">
-                                        <span class="text-sm text-black">
+                                    <div class="flex items-center justify-between px-4 py-3 bg-[#1E3A8A] rounded-b-2xl">
+                                        <span class="text-sm text-white">
                                             Showing {{ Math.min((currentPage-1)*perPage+1, filteredPaket.length) }}-{{ Math.min(currentPage*perPage, filteredPaket.length) }}
                                             of {{ filteredPaket.length }} items
                                         </span>
                                         <div class="flex items-center gap-1">
                                             <button @click="changePage(currentPage-1)" :disabled="currentPage===1"
-                                                    class="px-3 py-1 rounded hover:bg-gray-200 disabled:opacity-50">&lt;</button>
+                                                    class="px-3 py-1 rounded hover:bg-gray-200 disabled:opacity-50 text-white">&lt;</button>
                                             <button v-for="page in totalPages" :key="page" @click="changePage(page)"
                                                     :class="['px-3 py-1 rounded', currentPage===page ? 'bg-white text-black' : 'hover:bg-gray-200 text-black']">
                                                 {{ page }}
                                             </button>
                                             <button @click="changePage(currentPage+1)" :disabled="currentPage===totalPages"
-                                                    class="px-3 py-1 rounded hover:bg-gray-200 disabled:opacity-50">&gt;</button>
+                                                    class="px-3 py-1 rounded hover:bg-gray-200 disabled:opacity-50 text-white">&gt;</button>
                                         </div>
                                     </div>
                                 </td>
@@ -282,14 +282,14 @@ function destroyPaket(id) {
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Kategori <span class="text-red-500">*</span></label>
                     <input v-model="kategoriForm.nama_kategori" type="text" required
-                           class="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 text-sm"
+                           class="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-[#1E3A8A] text-sm"
                            placeholder="Contoh: Bromo, Yogyakarta, Bali" />
                     <p v-if="kategoriForm.errors.nama_kategori" class="text-red-500 text-xs mt-1">{{ kategoriForm.errors.nama_kategori }}</p>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Deskripsi</label>
                     <textarea v-model="kategoriForm.deskripsi" rows="3"
-                              class="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 text-sm resize-none"
+                              class="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-[#1E3A8A] text-sm resize-none"
                               placeholder="Deskripsi singkat destinasi..."></textarea>
                 </div>
                 <div>
@@ -302,7 +302,7 @@ function destroyPaket(id) {
                     </div>
                     <input type="file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
                            @change="e => kategoriForm.image = e.target.files[0]"
-                           class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                           class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E3A8A]" />
                     <p v-if="kategoriForm.errors.image" class="text-red-500 text-xs mt-1">{{ kategoriForm.errors.image }}</p>
                 </div>
                 <div class="flex gap-3 pt-2">

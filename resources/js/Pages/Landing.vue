@@ -56,7 +56,7 @@ onMounted(() => {
 
         <div v-if="kategoris && kategoris.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <a v-for="kategori in kategoris" :key="kategori.id"
-             href="/login-user"
+             :href="`/destinasi/${kategori.id}/paket`"
              class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 block">
             <div class="relative h-52 overflow-hidden">
               <img v-if="kategori.image_url" :src="kategori.image_url" :alt="kategori.nama_kategori"
@@ -75,7 +75,7 @@ onMounted(() => {
         <div v-else class="text-center text-gray-400 py-12">Belum ada destinasi tersedia</div>
 
         <div class="text-center mt-8">
-          <a href="/login-user"
+          <a href="/paket-wisata-public"
              class="inline-flex px-6 py-2 cursor-pointer items-center rounded-md border-2 border-black bg-white font-bold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none text-sm">
             Lihat Semua →
           </a>
@@ -123,7 +123,7 @@ onMounted(() => {
               <div class="text-center">
                 <p class="text-blue-200 text-xs mb-1">Mulai dari</p>
                 <p class="text-white font-extrabold text-xl leading-tight">
-                  IDR {{ Number(paket.harga).toLocaleString('id-ID') }}
+                  Rp. {{ Number(paket.harga).toLocaleString('id-ID') }}
                 </p>
                 <p class="text-blue-200 text-xs">/ Per Orang</p>
               </div>
@@ -137,7 +137,7 @@ onMounted(() => {
         <div v-else class="text-center text-gray-400 py-12">Belum ada paket tersedia</div>
 
         <div class="text-center mt-8">
-          <a href="/login-user"
+          <a href="/paket-wisata-public"
              class="inline-flex px-6 py-2 cursor-pointer items-center rounded-md border-2 border-black bg-white font-bold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none text-sm">
             Lihat Semua Paket →
           </a>
@@ -168,7 +168,7 @@ onMounted(() => {
             <!-- Info -->
             <h3 class="font-bold text-gray-900 text-base mb-1">{{ mobil.nama }}</h3>
             <p class="text-gray-500 text-sm mb-3">
-              IDR {{ Number(mobil.harga).toLocaleString('id-ID') }}
+              Rp. {{ Number(mobil.harga).toLocaleString('id-ID') }}
               <span v-if="mobil.durasi"> / {{ mobil.durasi }} Hari</span>
             </p>
             <!-- Button -->

@@ -13,5 +13,6 @@ class Mobil extends Model
         'harga',
         'image',
         'durasi',
+        'unit_tersedia',
     ];
 }

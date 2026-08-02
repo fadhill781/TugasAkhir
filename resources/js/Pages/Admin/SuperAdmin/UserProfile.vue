@@ -138,7 +138,7 @@ function backToUserList() {
                                 <div>
                                     <p class="text-sm text-gray-500">Total Pembayaran</p>
                                     <p class="font-bold text-blue-600 text-lg">
-                                        IDR {{ Number(p.total).toLocaleString('id-ID') }}
+                                    Rp. {{ Number(p.total).toLocaleString('id-ID') }}
                                     </p>
                                 </div>
                             </div>

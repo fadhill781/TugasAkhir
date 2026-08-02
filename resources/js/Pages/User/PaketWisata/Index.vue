@@ -1,7 +1,9 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
 import NavbarUser from '../../../includes/NavbarUser.vue';
+import NavbarGuest from '../../../includes/Navbar.vue';
 import Footer from '../../../includes/Footer.vue';
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 defineProps({
     kategoris: {
@@ -9,12 +11,16 @@ defineProps({
         required: true
     }
 });
+
+const page = usePage();
+const isLoggedIn = computed(() => !!page.props.auth?.user);
 </script>
 
 <template>
     <div class="min-h-screen bg-gray-50">
         <Head title="Destinasi Wisata" />
-        <NavbarUser />
+        <NavbarUser v-if="isLoggedIn" />
+        <NavbarGuest v-else />
         
         <div class="container mx-auto pt-36 py-12">
             <!-- Header -->

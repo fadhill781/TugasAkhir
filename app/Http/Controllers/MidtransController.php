@@ -80,14 +80,21 @@ class MidtransController extends Controller
         
         // Get all paket haris for this kategori for the dropdown
         $paketHaris = \App\Models\PaketHari::where('kategori_id', $kategori->id)
+            ->with(['paketWisatas' => function($q) {
+                $q->select('id', 'paket_hari_id', 'nama_wisata', 'short_description', 'long_description');
+            }])
             ->orderBy('durasi_hari', 'asc')
             ->get()
             ->map(function($ph) {
+                // Ambil paket wisata pertama sebagai representasi deskripsi per durasi
+                $pw = $ph->paketWisatas->first();
                 return [
-                    'id' => $ph->id,
-                    'durasi_hari' => $ph->durasi_hari,
-                    'harga' => $ph->harga,
-                    'deskripsi' => $ph->deskripsi,
+                    'id'                => $ph->id,
+                    'durasi_hari'       => $ph->durasi_hari,
+                    'harga'             => $ph->harga,
+                    'deskripsi'         => $ph->deskripsi,
+                    'short_description' => $pw?->short_description ?? '',
+                    'long_description'  => $pw?->long_description  ?? '',
                 ];
             });
 

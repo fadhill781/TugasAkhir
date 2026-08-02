@@ -8,7 +8,7 @@ import Footer from '../includes/Footer.vue';
     <NavbarUser />
     <Head title="Pembayaran Berhasil" />
 
-    <div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 flex flex-col justify-center items-center px-4 py-20">
+    <div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 flex flex-col justify-center items-center px-4 py-20 pt-36">
         
         <!-- Confetti-like decorative circles -->
         <div class="fixed inset-0 overflow-hidden pointer-events-none">

@@ -12,7 +12,7 @@ const props = defineProps({
 
 // WhatsApp message template
 const getWhatsAppLink = () => {
-    const formattedPrice = `IDR ${Number(props.mobil.harga).toLocaleString('id-ID')}`;
+    const formattedPrice = `Rp. ${Number(props.mobil.harga).toLocaleString('id-ID')}`;
     const message = `Halo, saya tertarik untuk menyewa mobil:\n\nNama Mobil: ${props.mobil.nama}\nHarga: ${formattedPrice}\nDurasi: ${props.mobil.durasi} Hari\n\nMohon informasi lebih lanjut. Terima kasih!`;
     return `https://wa.me/6281234567890?text=${encodeURIComponent(message)}`;
 };
@@ -106,7 +106,7 @@ const getWhatsAppLink = () => {
                                 </div>
                                 <div>
                                     <p class="text-sm text-gray-500">Harga Rental</p>
-                                    <p class="text-2xl font-bold text-blue-600">IDR {{ Number(mobil.harga).toLocaleString('id-ID') }}</p>
+                                    <p class="text-2xl font-bold text-blue-600">Rp. {{ Number(mobil.harga).toLocaleString('id-ID') }}</p>
                                     <p class="text-xs text-gray-500">untuk {{ mobil.durasi }} hari</p>
                                 </div>
                             </div>

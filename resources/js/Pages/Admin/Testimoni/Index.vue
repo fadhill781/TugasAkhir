@@ -42,7 +42,7 @@ function destroy(id) {
         <h1 class="text-2xl font-semibold text-gray-800">Kelola Testimoni</h1>
         <button
           @click="goToCreate"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md transition duration-200"
+          class="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-md transition duration-200"
         >
           Tambah Testimoni
         </button>
@@ -50,7 +50,7 @@ function destroy(id) {
 
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-300 rounded-lg overflow-hidden">
-          <thead class="bg-blue-500">
+          <thead class="bg-[#1E3A8A]">
             <tr>
               <th class="text-left px-6 py-3 border border-gray-300 text-white">Testimoni</th>
               <th class="text-left px-6 py-3 border border-gray-300 text-white">Nama</th>
@@ -83,11 +83,11 @@ function destroy(id) {
               </td>
               <td class="px-6 py-4 border border-gray-300 text-center space-x-2">
                 <button @click="goToEdit(testimoni.id)"
-                        class="inline-block bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md transition">
+                        class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md transition">
                   Edit
                 </button>
                 <button @click="destroy(testimoni.id)"
-                        class="inline-block bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md transition">
+                        class="inline-block bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded-md transition">
                   Hapus
                 </button>
               </td>

@@ -78,7 +78,7 @@ function destroy(id) {
                             <div class="mt-10 flex justify-between items-center">
                                 <input type="text" v-model="searchQuery" @input="handleSearch" placeholder="Search"
                                     class="border border-gray-300 rounded-[10px] px-4 py-2 mb-2 w-80" />
-                                <button class="bg-green-600 text-white px-5 py-2 rounded"
+                                <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-sm font-semibold"
                                     onclick="window.location.href='/add-mobil'">
                                     Tambah Mobil
                                 </button>
@@ -87,29 +87,32 @@ function destroy(id) {
                             <table class="min-w-full border-black border-collapse">
                                 <thead>
                                     <tr>
-                                        <th class="border-b border-black border-l-0 px-4 py-4 bg-blue-500 text-black rounded-tl-2xl">
+                                        <th class="border-b border-black border-l-0 px-4 py-4 bg-[#1E3A8A] text-white rounded-tl-2xl">
                                             No
                                         </th>
-                                        <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">
+                                        <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">
                                             Nama Mobil
                                         </th>
-                                        <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">
+                                        <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">
                                             Harga
                                         </th>
-                                        <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">
+                                        <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">
                                             Durasi (Hari)
                                         </th>
-                                        <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">
+                                        <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">
+                                            Unit Tersedia
+                                        </th>
+                                        <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">
                                             Gambar
                                         </th>
-                                        <th class="border-b border-black border-r-0 px-4 py-2 bg-blue-500 text-black rounded-tr-2xl">
+                                        <th class="border-b border-black border-r-0 px-4 py-2 bg-[#1E3A8A] text-white rounded-tr-2xl">
                                             Aksi
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-if="filteredMobil.length === 0">
-                                        <td colspan="5" class="border-b border-black text-center px-4 py-2">
+                                        <td colspan="7" class="border-b border-black text-center px-4 py-2">
                                             No vehicles added.
                                         </td>
                                     </tr>
@@ -121,16 +124,24 @@ function destroy(id) {
                                             {{ car.nama }}
                                         </td>
                                         <td class="border-b border-black px-4 py-2 text-center">
-                                            {{ car.harga }}
+                                            Rp. {{ Number(car.harga).toLocaleString('id-ID') }}
                                         </td>
                                         <td class="border-b border-black px-4 py-2 text-center">
                                             {{ car.durasi }}
                                         </td>
                                         <td class="border-b border-black px-4 py-2 text-center">
+                                            <span :class="[
+                                                'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold',
+                                                car.unit_tersedia > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                            ]">
+                                                {{ car.unit_tersedia ?? 0 }} Unit
+                                            </span>
+                                        </td>
+                                        <td class="border-b border-black px-4 py-2 text-center">
                                             <img :src="`/storage/uploads/admin/mobil/${car.image}`" alt="Foto Mobil" class="w-24 h-auto mx-auto rounded" />
                                         </td>
                                         <td class="border-b border-black border-r-0 px-4 py-2 text-center space-x-2">
-                                            <button class="bg-blue-500 text-white px-4 py-2 rounded"
+                                            <button class="bg-[#1E3A8A] text-white px-4 py-2 rounded"
                                                 @click.prevent="() => show(car.id)">
                                                 Edit
                                             </button>
@@ -141,9 +152,9 @@ function destroy(id) {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="6" class="p-0">
+                                        <td colspan="7" class="p-0">
                                             <div
-                                                class="flex items-center justify-between px-4 py-3 bg-blue-500 rounded-b-2xl">
+                                                class="flex items-center justify-between px-4 py-3 bg-[#1E3A8A] rounded-b-2xl">
                                                 <div class="flex items-center gap-4">
                                                     <select v-model="perPage"
                                                         @change="changePerPage($event.target.value)"
@@ -153,17 +164,17 @@ function destroy(id) {
                                                         <option :value="50">50 per page</option>
                                                         <option :value="100">100 per page</option>
                                                     </select>
-                                                    <span class="text-sm text-black">
-                                                        Showing {{ ((currentPage - 1) * perPage) + 1 }}-{{
-                                                            Math.min(currentPage * perPage, mobil.length)
-                                                        }} of {{ mobil.length }} items
+                                                    <span class="text-sm text-white">
+                                                        Showing {{ filteredMobil.length === 0 ? 0 : ((currentPage - 1) * perPage) + 1 }}-{{
+                                                            Math.min(currentPage * perPage, filteredMobil.length)
+                                                        }} of {{ filteredMobil.length }} items
                                                     </span>
                                                 </div>
 
                                                 <div class="flex items-center">
                                                     <button @click="changePage(currentPage - 1)"
                                                         :disabled="currentPage === 1"
-                                                        class="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:hover:bg-transparent px-3">
+                                                        class="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:hover:bg-transparent px-3 text-white">
                                                         &lt;
                                                     </button>
 
@@ -172,15 +183,15 @@ function destroy(id) {
                                                             @click="changePage(page)" :class="[
                                                                 'px-3 py-1 rounded',
                                                                 currentPage === page
-                                                                    ? 'bg-white text-black'
-                                                                    : 'hover:bg-gray-200 text-black'
+                                                                    ? 'bg-white text-blue-600 font-bold'
+                                                                    : 'hover:bg-blue-400 text-white'
                                                             ]">
                                                             {{ page }}
                                                         </button>
                                                     </div>
                                                     <button @click="changePage(currentPage + 1)"
                                                         :disabled="currentPage === totalPages"
-                                                        class="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:hover:bg-transparent px-3">
+                                                        class="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:hover:bg-transparent px-3 text-white">
                                                         &gt;
                                                     </button>
                                                 </div>

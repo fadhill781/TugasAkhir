@@ -37,6 +37,15 @@ const selectedPaketHari = computed(() => {
   return props.paketHaris.find(ph => ph.id === form.paket_hari_id);
 });
 
+// Deskripsi & detail ikut berubah sesuai durasi yang dipilih
+const activeShortDesc = computed(() =>
+  selectedPaketHari.value?.short_description || props.paketWisata.short_description || ''
+);
+
+const activeLongDesc = computed(() =>
+  selectedPaketHari.value?.long_description || props.paketWisata.long_description || ''
+);
+
 const totalHarga = computed(() => {
   if (!selectedPaketHari.value) return 0;
   return selectedPaketHari.value.harga * form.jumlah_orang;
@@ -189,16 +198,20 @@ function submit() {
             </div>
 
             <!-- Short Description -->
-            <div v-if="paketWisata.short_description" class="mb-6">
+            <div v-if="activeShortDesc" class="mb-6">
               <h3 class="text-xl font-bold text-gray-800 mb-3">Deskripsi Singkat</h3>
-              <p class="text-gray-700 leading-relaxed">{{ paketWisata.short_description }}</p>
+              <Transition name="fade" mode="out-in">
+                <p :key="activeShortDesc" class="text-gray-700 leading-relaxed">{{ activeShortDesc }}</p>
+              </Transition>
             </div>
 
             <!-- Long Description / Itinerary -->
-            <div v-if="paketWisata.long_description" class="mb-6">
+            <div v-if="activeLongDesc" class="mb-6">
               <h3 class="text-xl font-bold text-gray-800 mb-3">Detail Paket & Itinerary</h3>
               <div class="prose prose-blue max-w-none">
-                <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ paketWisata.long_description }}</p>
+                <Transition name="fade" mode="out-in">
+                  <p :key="activeLongDesc" class="text-gray-700 leading-relaxed whitespace-pre-line">{{ activeLongDesc }}</p>
+                </Transition>
               </div>
             </div>
 
@@ -386,3 +399,14 @@ function submit() {
     <Footer />
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

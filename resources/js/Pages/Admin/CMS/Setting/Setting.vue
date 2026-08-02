@@ -65,7 +65,7 @@ function destroy(id) {
                             <div class="mt-10 flex justify-between items-center">
                                 <input type="text" v-model="searchQuery" @input="handleSearch" placeholder="Search"
                                     class="border border-gray-300 rounded-[10px] px-4 py-2 mb-2 w-80" />
-                                <button class="bg-green-500 text-white px-5 py-2 rounded hover:bg-green-700"
+                                <button class="bg-green-500 text-white px-5 py-2 rounded hover:bg-green-600"
                                     @click="goToCreate">
                                     Tambah Setting
                                 </button>
@@ -74,19 +74,19 @@ function destroy(id) {
                             <table class="min-w-full border-collapse">
                                 <thead>
                                     <tr>
-                                        <th class="border-b border-black border-l-0 px-4 py-4 bg-blue-500 text-black rounded-tl-2xl">
+                                        <th class="border-b border-black border-l-0 px-4 py-4 bg-[#1E3A8A] text-white rounded-tl-2xl">
                                             No
                                         </th>
-                                        <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">
+                                        <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">
                                             Nama
                                         </th>
-                                        <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">
+                                        <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">
                                             Deskripsi
                                         </th>
-                                        <th class="border-b border-black px-4 py-4 bg-blue-500 text-black">
+                                        <th class="border-b border-black px-4 py-4 bg-[#1E3A8A] text-white">
                                             Gambar
                                         </th>
-                                        <th class="border-b border-black border-r-0 px-4 py-2 bg-blue-500 text-black rounded-tr-2xl">
+                                        <th class="border-b border-black border-r-0 px-4 py-2 bg-[#1E3A8A] text-white rounded-tr-2xl">
                                             Aksi
                                         </th>
                                     </tr>
@@ -127,7 +127,7 @@ function destroy(id) {
                                     </tr>
                                     <tr>
                                         <td colspan="5" class="p-0">
-                                            <div class="flex items-center justify-between px-4 py-3 bg-blue-500 rounded-b-2xl">
+                                            <div class="flex items-center justify-between px-4 py-3 bg-[#1E3A8A] rounded-b-2xl">
                                                 <div class="flex items-center gap-4">
                                                     <select v-model="perPage" @change="changePerPage($event.target.value)"
                                                         class="bg-white border border-gray-300 rounded px-2 py-1 text-sm">
@@ -136,7 +136,7 @@ function destroy(id) {
                                                         <option :value="50">50 per page</option>
                                                         <option :value="100">100 per page</option>
                                                     </select>
-                                                    <span class="text-sm text-black">
+                                                    <span class="text-sm text-white">
                                                         Showing {{ ((currentPage - 1) * perPage) + 1 }}-{{
                                                             Math.min(currentPage * perPage, filteredSetting.length)
                                                         }} of {{ filteredSetting.length }} items
@@ -145,7 +145,7 @@ function destroy(id) {
                                                 <div class="flex items-center">
                                                     <button @click="changePage(currentPage - 1)"
                                                         :disabled="currentPage === 1"
-                                                        class="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:hover:bg-transparent px-3">
+                                                        class="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:hover:bg-transparent px-3 text-white">
                                                         &lt;
                                                     </button>
                                                     <div class="flex items-center gap-1">
@@ -159,7 +159,7 @@ function destroy(id) {
                                                     </div>
                                                     <button @click="changePage(currentPage + 1)"
                                                         :disabled="currentPage === totalPages"
-                                                        class="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:hover:bg-transparent px-3">
+                                                        class="p-1 rounded hover:bg-gray-200 disabled:opacity-50 disabled:hover:bg-transparent px-3 text-white">
                                                         &gt;
                                                     </button>
                                                 </div>

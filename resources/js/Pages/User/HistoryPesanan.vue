@@ -161,6 +161,14 @@ function uploadBukti(id) {
                                         </svg>
                                         Cetak Invoice
                                     </a>
+                                    <!-- Cetak Nota - untuk semua status -->
+                                    <a :href="`/user/nota/${p.id}`" target="_blank"
+                                       class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 cursor-pointer rounded-md border-2 border-black bg-yellow-400 font-bold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none text-xs">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        Cetak Nota
+                                    </a>
                                 </div>
                             </div>
                         </div>

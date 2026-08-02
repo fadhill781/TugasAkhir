@@ -125,7 +125,7 @@ const galleryImages = computed(() => props.setting?.gallery_urls || []);
               <div class="text-center">
                 <p class="text-blue-200 text-xs mb-1">Mulai dari</p>
                 <p class="text-white font-extrabold text-xl leading-tight">
-                  IDR {{ Number(paket.harga).toLocaleString('id-ID') }}
+                  Rp. {{ Number(paket.harga).toLocaleString('id-ID') }}
                 </p>
                 <p class="text-blue-200 text-xs">/ Per Orang</p>
               </div>
@@ -170,7 +170,7 @@ const galleryImages = computed(() => props.setting?.gallery_urls || []);
             <!-- Info -->
             <h3 class="font-bold text-gray-900 text-base mb-1">{{ mobil.nama }}</h3>
             <p class="text-gray-500 text-sm mb-3">
-              IDR {{ Number(mobil.harga).toLocaleString('id-ID') }}
+              Rp. {{ Number(mobil.harga).toLocaleString('id-ID') }}
               <span v-if="mobil.durasi"> / {{ mobil.durasi }} Hari</span>
             </p>
             <!-- Button -->

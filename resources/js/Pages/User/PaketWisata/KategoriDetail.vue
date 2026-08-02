@@ -1,7 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue';
 import NavbarUser from '@/includes/NavbarUser.vue';
+import NavbarGuest from '@/includes/Navbar.vue';
 import Footer from '@/includes/Footer.vue';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const isLoggedIn = computed(() => !!page.props.auth?.user);
 
 const props = defineProps({
   kategori: Object,
@@ -32,7 +37,8 @@ const sortedPakets = computed(() => {
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <NavbarUser />
+    <NavbarUser v-if="isLoggedIn" />
+    <NavbarGuest v-else />
     
     <div class="container mx-auto px-6 py-16 ">
       <!-- Article-Style About Section -->

@@ -69,6 +69,20 @@ const sortedMobils = computed(() => {
                     
                     <!-- Card Content -->
                     <div class="p-5">
+                        <!-- Unit Tersedia Badge -->
+                        <div class="flex items-center gap-2 mb-3">
+                            <span :class="[
+                                'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold',
+                                mobil.unit_tersedia > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            ]">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                                    <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H11a1 1 0 001-1v-1h2.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0017 5h-1V4a1 1 0 00-1-1H3z"/>
+                                </svg>
+                                {{ mobil.unit_tersedia > 0 ? mobil.unit_tersedia + ' Unit Tersedia' : 'Tidak Tersedia' }}
+                            </span>
+                        </div>
+
                         <!-- Duration -->
                         <div v-if="mobil.durasi" class="flex items-center gap-2 mb-3 text-gray-600">
                             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +96,7 @@ const sortedMobils = computed(() => {
                             <div>
                                 <p class="text-xs text-gray-500">Harga</p>
                                 <p class="text-lg font-bold text-blue-600">
-                                    IDR {{ Number(mobil.harga).toLocaleString('id-ID') }}
+                                    Rp. {{ Number(mobil.harga).toLocaleString('id-ID') }}
                                 </p>
                                 <p v-if="mobil.durasi" class="text-xs text-gray-500">/ {{ mobil.durasi }} Hari</p>
                             </div>

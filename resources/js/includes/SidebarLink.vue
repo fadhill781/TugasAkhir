@@ -1,9 +1,9 @@
 <template>
   <a
     :href="href"
-    class="flex items-center space-x-3 px-4 py-2 rounded-md transition-all duration-200 hover:bg-white"
+    class="flex items-center space-x-3 px-4 py-2 rounded-md transition-all duration-200 hover:bg-[#2563EB]"
     :class="[
-      active ? 'bg-white text-dark' : 'text-dark',
+      active ? 'bg-white text-[#1E3A8A]' : 'text-dark',
       collapsed ? 'justify-center' : ''
     ]"
   >

@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', UserMiddleware::class])->group(function () {
     Route::get('/homepage', [CmsSettingController::class, 'homepage'])->name('homepage');
     Route::get('/user/invoice/{id}', [PesananController::class, 'generateInvoice'])->name('pesanan.invoice.user');
+    Route::get('/user/nota/{id}', [PesananController::class, 'generateNota'])->name('pesanan.nota.user');
     Route::post('/pesanan/{id}/bukti', [PesananController::class, 'uploadBukti'])->name('pesanan.bukti');
     Route::get('/galeri', [\App\Http\Controllers\GaleriController::class, 'index'])->name('galeri.index');
 });
@@ -108,6 +109,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
         Route::get('/admin/transaksi-keuangan', [\App\Http\Controllers\TransaksiKeuanganController::class, 'index'])->name('transaksi.keuangan');
         Route::get('/admin/transaksi-baru', [\App\Http\Controllers\TransaksiKeuanganController::class, 'create'])->name('transaksi.keuangan.create');
         Route::post('/admin/transaksi-baru', [\App\Http\Controllers\TransaksiKeuanganController::class, 'store'])->name('transaksi.keuangan.store');
+        Route::post('/transaksi-manual/preview', [\App\Http\Controllers\TransaksiKeuanganController::class, 'previewInvoiceManual'])->name('transaksi.manual.preview');
 
         Route::get('/CMS/Setting/AddSetting', [CmsSettingController::class, 'addcmssetting'])->name('cmssetting.add');
         Route::post('/cms-setting', [CmsSettingController::class, 'store'])->name('cmssetting.store');
@@ -130,6 +132,9 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
         Route::put('/pesanan/{pesanan}', [PesananController::class, 'update']);
         Route::put('/pesanan/{pesanan}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
         Route::get('/pesanan/{id}/invoice', [PesananController::class, 'generateInvoice'])->name('pesanan.invoice');
+        Route::get('/pesanan/{id}/nota', [PesananController::class, 'generateNota'])->name('pesanan.nota');
+        Route::get('/nota-manual', [PesananController::class, 'notaManual'])->name('pesanan.nota.manual');
+        Route::post('/nota-manual/preview', [PesananController::class, 'printNotaManual'])->name('pesanan.nota.manual.preview');
         Route::delete('/pesanan/{pesanan}', [PesananController::class, 'destroy']);
 
         Route::get('/galeri-admin', [\App\Http\Controllers\GaleriController::class, 'adminIndex'])->name('admin.galeri.index');

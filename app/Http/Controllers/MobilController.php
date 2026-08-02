@@ -22,6 +22,7 @@ class MobilController extends Controller
             'harga' => 'nullable|string',
             'image' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
             'durasi' => 'nullable|string',
+            'unit_tersedia' => 'nullable|integer|min:0',
         ]);
 
         if ($request->hasFile('image')) {
@@ -69,6 +70,7 @@ class MobilController extends Controller
             'nama' => 'required|string|max:255',
             'harga' => 'nullable|string',
             'durasi' => 'nullable|string',
+            'unit_tersedia' => 'nullable|integer|min:0',
         ];
 
         if ($request->hasFile('image')) {
@@ -127,11 +129,12 @@ class MobilController extends Controller
     {
         $mobils = Mobil::all()->map(function($mobil) {
             return [
-                'id' => $mobil->id,
-                'nama' => $mobil->nama,
-                'harga' => $mobil->harga,
-                'durasi' => $mobil->durasi,
-                'image_url' => $mobil->image ? asset('storage/uploads/admin/mobil/' . $mobil->image) : null,
+                'id'             => $mobil->id,
+                'nama'           => $mobil->nama,
+                'harga'          => $mobil->harga,
+                'durasi'         => $mobil->durasi,
+                'unit_tersedia'  => $mobil->unit_tersedia ?? 0,
+                'image_url'      => $mobil->image ? asset('storage/uploads/admin/mobil/' . $mobil->image) : null,
             ];
         });
 
@@ -147,11 +150,12 @@ class MobilController extends Controller
         
         return Inertia::render('User/Mobil/Detail', [
             'mobil' => [
-                'id' => $mobil->id,
-                'nama' => $mobil->nama,
-                'harga' => $mobil->harga,
-                'durasi' => $mobil->durasi,
-                'image_url' => $mobil->image ? asset('storage/uploads/admin/mobil/' . $mobil->image) : null,
+                'id'            => $mobil->id,
+                'nama'          => $mobil->nama,
+                'harga'         => $mobil->harga,
+                'durasi'        => $mobil->durasi,
+                'unit_tersedia' => $mobil->unit_tersedia ?? 0,
+                'image_url'     => $mobil->image ? asset('storage/uploads/admin/mobil/' . $mobil->image) : null,
             ]
         ]);
     }

@@ -145,7 +145,7 @@
         <!-- Header -->
         <div class="header">
             <div class="header-left">
-                <div class="company-name">ICONIC TOUR</div>
+                <div class="company-name">ICONIC</div>
                 <div>Travel & Tour Agency</div>
                 <div>Jl. Contoh No. 123, Kota</div>
                 <div>Telp: (021) 1234-5678</div>

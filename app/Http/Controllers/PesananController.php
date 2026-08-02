@@ -8,6 +8,8 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PaymentStatusNotification;
 
 class PesananController extends Controller
 {
@@ -66,6 +68,8 @@ class PesananController extends Controller
             'status' => 'required|in:pending,confirmed,cancelled',
         ]);
 
+        $oldStatus = $pesanan->status;
+
         // Update status and aksi based on status
         $aksi = match($validated['status']) {
             'confirmed' => 'Pembayaran Lunas',
@@ -78,6 +82,26 @@ class PesananController extends Controller
             'status' => $validated['status'],
             'aksi' => $aksi,
         ]);
+
+        // Kirim email notifikasi jika status berubah
+        if ($oldStatus !== $validated['status'] && $pesanan->email) {
+            try {
+                $pesanan->load('paketHari.kategori');
+                $paketHari = $pesanan->paketHari;
+                if ($paketHari && $paketHari->kategori) {
+                    Mail::to($pesanan->email)->send(
+                        new PaymentStatusNotification(
+                            $pesanan,
+                            $paketHari->kategori->nama_kategori,
+                            $paketHari->durasi_hari,
+                            $validated['status']
+                        )
+                    );
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to send payment status email: ' . $e->getMessage());
+            }
+        }
 
         return back()->with('success', 'Status pembayaran berhasil diperbarui.');
     }
@@ -126,6 +150,70 @@ class PesananController extends Controller
         $pesanan->delete();
 
         return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil dihapus.');
+    }
+
+    public function notaManual()
+    {
+        return Inertia::render('Admin/Pesanan/NotaManual');
+    }
+
+    public function printNotaManual(Request $request)
+    {
+        $raw = $request->input('data');
+        $data = json_decode($raw, true);
+
+        if (!$data) {
+            abort(400, 'Data tidak valid.');
+        }
+
+        // Sanitasi items
+        $items = collect($data['items'] ?? [])->map(function ($item) {
+            return [
+                'deskripsi'   => $item['deskripsi'] ?? '',
+                'keterangan'  => $item['keterangan'] ?? '',
+                'qty'         => max(1, intval($item['qty'] ?? 1)),
+                'harga'       => max(0, intval($item['harga'] ?? 0)),
+            ];
+        })->filter(fn($i) => !empty($i['deskripsi']))->values();
+
+        return view('nota-manual', [
+            'noNota'           => $data['no_nota']           ?? '-',
+            'tanggal'          => $data['tanggal']           ?? now()->toDateString(),
+            'status'           => $data['status']            ?? 'Pending',
+            'nama'             => $data['nama']              ?? '-',
+            'telepon'          => $data['telepon']           ?? '',
+            'alamat'           => $data['alamat']            ?? '',
+            'tanggalBerangkat' => $data['tanggal_berangkat'] ?? '',
+            'jumlahOrang'      => $data['jumlah_orang']      ?? '',
+            'durasi'           => $data['durasi']            ?? '',
+            'dp'               => max(0, intval($data['dp'] ?? 0)),
+            'catatan'          => $data['catatan']           ?? '',
+            'items'            => $items,
+        ]);
+    }
+
+    public function generateNota($id)
+    {
+        $pesanan = Pesanan::with('paketHari.kategori')->findOrFail($id);
+
+        $kategori = $pesanan->paketHari && $pesanan->paketHari->kategori
+            ? $pesanan->paketHari->kategori->nama_kategori
+            : '-';
+
+        $paketHari = $pesanan->paketHari
+            ? $pesanan->paketHari->durasi_hari . ' Hari'
+            : '-';
+
+        $hargaPerOrang = $pesanan->jumlah_orang > 0
+            ? $pesanan->total / $pesanan->jumlah_orang
+            : 0;
+
+        return view('nota', [
+            'pesanan'      => $pesanan,
+            'kategori'     => $kategori,
+            'paketHari'    => $paketHari,
+            'hargaPerOrang'=> $hargaPerOrang,
+        ]);
     }
 
     public function generateInvoice($id)

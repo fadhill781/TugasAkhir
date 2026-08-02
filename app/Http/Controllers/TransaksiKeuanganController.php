@@ -10,20 +10,7 @@ class TransaksiKeuanganController extends Controller
 {
     public function create()
     {
-        $paketHaris = \App\Models\PaketHari::with('kategori')
-            ->orderBy('kategori_id')
-            ->orderBy('durasi_hari')
-            ->get()
-            ->map(fn($p) => [
-                'id'         => $p->id,
-                'durasi_hari'=> $p->durasi_hari,
-                'harga'      => $p->harga,
-                'kategori'   => $p->kategori?->nama_kategori ?? '-',
-            ]);
-
-        return Inertia::render('Admin/Transaksi/TransaksiBaru', [
-            'paketHaris' => $paketHaris,
-        ]);
+        return Inertia::render('Admin/Transaksi/TransaksiBaru');
     }
 
     public function index(Request $request)
@@ -104,43 +91,34 @@ class TransaksiKeuanganController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama'              => 'required|string|max:255',
-            'email'             => 'required|email|max:255',
-            'telepon'           => 'required|string|max:20',
-            'paket_hari_id'     => 'nullable|exists:paket_haris,id',
-            'jumlah_orang'      => 'required|integer|min:1',
-            'tanggal_berangkat' => 'required|date',
-            'catatan'           => 'nullable|string',
-            'total'             => 'required|integer|min:0',
-            'status'            => 'required|in:pending,confirmed,cancelled',
-            'waktu'             => 'required|date',
+        // Tidak digunakan — invoice manual tidak disimpan ke database
+        return redirect()->route('transaksi.keuangan');
+    }
+
+    public function previewInvoiceManual(Request $request)
+    {
+        $raw  = $request->input('data');
+        $data = json_decode($raw, true);
+
+        if (!$data) abort(400, 'Data tidak valid.');
+
+        $items = collect($data['items'] ?? [])->map(fn($i) => [
+            'deskripsi'  => $i['deskripsi']  ?? '',
+            'keterangan' => $i['keterangan'] ?? '',
+            'qty'        => max(1, intval($i['qty']   ?? 1)),
+            'harga'      => max(0, intval($i['harga'] ?? 0)),
+        ])->filter(fn($i) => !empty($i['deskripsi']))->values();
+
+        return view('invoice-manual', [
+            'noInvoice'        => $data['no_invoice']        ?? '-',
+            'tanggal'          => $data['tanggal']           ?? now()->toDateString(),
+            'status'           => $data['status']            ?? 'Lunas',
+            'nama'             => $data['nama']              ?? '-',
+            'telepon'          => $data['telepon']           ?? '',
+            'tanggalBerangkat' => $data['tanggal_berangkat'] ?? '',
+            'keterangan'       => $data['keterangan']        ?? '',
+            'dp'               => max(0, intval($data['dp'] ?? 0)),
+            'items'            => $items,
         ]);
-
-        $aksi = match($validated['status']) {
-            'confirmed' => 'Pembayaran Lunas',
-            'pending'   => 'Menunggu Pembayaran',
-            'cancelled' => 'Dibatalkan',
-            default     => 'Menunggu Pembayaran',
-        };
-
-        \App\Models\Pesanan::create([
-            'user_id'           => auth()->id(),
-            'paket_hari_id'     => $validated['paket_hari_id'],
-            'nama'              => $validated['nama'],
-            'email'             => $validated['email'],
-            'telepon'           => $validated['telepon'],
-            'jumlah_orang'      => $validated['jumlah_orang'],
-            'tanggal_berangkat' => $validated['tanggal_berangkat'],
-            'catatan'           => $validated['catatan'],
-            'waktu'             => $validated['waktu'],
-            'total'             => $validated['total'],
-            'status'            => $validated['status'],
-            'aksi'              => $aksi,
-            'order_id'          => 'ORDER-' . time(),
-        ]);
-
-        return redirect()->route('transaksi.keuangan')
-            ->with('success', 'Transaksi berhasil disimpan.');
     }
 }

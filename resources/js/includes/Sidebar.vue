@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="bg-blue-500 h-screen border-r shadow-md fixed z-50 transition-all duration-300 ease-in-out flex flex-col"
+    class="bg-[#1E3A8A] h-screen border-r shadow-md fixed z-50 transition-all duration-300 ease-in-out flex flex-col"
     :class="sidebarOpen ? 'w-64' : 'w-20'"
   >
     <div class="flex justify-center items-center py-6 px-4 relative">
@@ -12,14 +12,14 @@
       />
       <button 
         @click="toggleSidebar" 
-        class="text-dark absolute top-6"
+        class="text-white absolute top-6"
         :class="sidebarOpen ? 'right-4' : 'right-8'"
       >
         <i class="las la-bars text-2xl"></i>
       </button>
     </div>
 
-    <nav class="px-4 space-y-2 font-semibold text-dark overflow-y-auto flex-1 mt-2 pb-2 scrollbar-hide"
+    <nav class="px-4 space-y-2 font-semibold text-white overflow-y-auto flex-1 mt-2 pb-2 scrollbar-hide"
          style="max-height: calc(100vh - 120px);"
     >
       <!-- Dashboard: semua admin (admin & superadmin) -->
@@ -185,7 +185,7 @@
       <div v-if="$page.props.auth?.user?.role === 'superadmin'">
         <button
           class="w-full flex items-center justify-between gap-3 rounded-md text-dark overflow-hidden px-4 py-2"
-          :class="$page.url.startsWith('/transaksi') ? 'bg-white' : ''"
+          :class="$page.url.startsWith('/transaksi') ? 'bg-blue-300' : ''"
         >
           <div class="flex items-center gap-3">
             <i class="las la-exchange-alt text-2xl"></i>
@@ -219,14 +219,14 @@
                 :collapsed="!sidebarOpen"
               />
             </li>
-            <!-- <li>
+            <li>
               <SidebarLink
                 href="/admin/transaksi-baru"
                 label="Transaksi Baru"
                 :active="$page.url === '/admin/transaksi-baru'"
                 :collapsed="!sidebarOpen"
               />
-            </li> -->
+            </li> 
           </ul>
         </transition>
       </div>
@@ -237,7 +237,7 @@
 
   <button
     class="w-full flex items-center gap-3 rounded-md 
-           text-dark overflow-hidden transition px-4 py-2 space-y-2 font-semibold text-bold"
+           text-white overflow-hidden transition px-4 py-2 space-y-2 font-semibold text-bold"
     @click="logout"
   >
     <span 

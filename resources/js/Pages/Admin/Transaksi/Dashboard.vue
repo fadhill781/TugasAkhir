@@ -120,7 +120,7 @@ function getStatusLabel(status) {
                             <span class="text-xs text-gray-500 font-semibold">
                                 {{ item.total > 0 ? (item.total / 1000000).toFixed(1) + 'jt' : '' }}
                             </span>
-                            <div class="w-full bg-blue-500 rounded-t transition-all duration-500 hover:bg-blue-600 cursor-pointer relative group"
+                            <div class="w-full bg-[#1E3A8A] rounded-t transition-all duration-500 hover:bg-blue-600 cursor-pointer relative group"
                                  :style="`height: ${maxPendapatan > 0 ? Math.max((item.total / maxPendapatan) * 120, item.total > 0 ? 8 : 2) : 2}px`">
                                 <!-- Tooltip -->
                                 <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
@@ -141,7 +141,7 @@ function getStatusLabel(status) {
                             <div class="flex gap-2">
                                 <button v-for="f in [{v:'all',l:'Semua'},{v:'confirmed',l:'Lunas'},{v:'pending',l:'Pending'},{v:'cancelled',l:'Dibatalkan'}]"
                                         :key="f.v" @click="filterStatus = f.v"
-                                        :class="['px-4 py-2 rounded-lg border-2 text-sm font-bold transition', filterStatus === f.v ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400']">
+                                        :class="['px-4 py-2 rounded-lg border-2 text-sm font-bold transition', filterStatus === f.v ? 'bg-[#1E3A8A] text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400']">
                                     {{ f.l }}
                                 </button>
                             </div>
